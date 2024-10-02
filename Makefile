@@ -12,16 +12,17 @@ GHDL_FLAGS  = --ieee=synopsys --warn-no-vital-generic --workdir=$(WORKDIR)
 
 STOP_TIME = 500ns
 # Simulation break condition
-#GHDL_SIM_OPT = --assert-level=error
+# GHDL_SIM_OPT = --assert-level=error
 GHDL_SIM_OPT = --stop-time=$(STOP_TIME)
 
-WAVEFORM_VIEWER = flatpak run io.github.gtkwave.GTKWave
-# WAVEFORM_VIEWER = gtkwave
+WAVEFORM_VIEWER = gtkwave
 
 .PHONY: clean
 
 all: clean make run view
 
+test: clean make run
+wave: clean make run view
 make:
 ifeq ($(strip $(TESTBENCH)),)
 	@echo "TESTBENCH not set. Use TESTBENCH=<value> to set it."

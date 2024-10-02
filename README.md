@@ -1,12 +1,11 @@
-# ghdl-example
+Projet pour le module de "Conception d'un Système sur Puce" du 3A de l'approfondissement SLE de Telecom Nancy
 
-## Prerequisites
+Le projet consiste d'un Processeur RISC-V simplifié.
 
-* make
-* gcc
-* ghdl 1.0.0 and up
-* gtkwave
+Pour executer un testbench et voir les formes d'onde:
 
-## How to use
+    make TESTBENCH=<nom de l'entité> wave
 
-`make TESTBENCH=counter`
+pour executer un tesbench sans voir les formes d'onde:
+
+    make TESTBENCH=<nom de l'entité> test

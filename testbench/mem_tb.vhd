@@ -1,0 +1,42 @@
+library IEEE;
+use IEEE.std_logic_1164.all;
+use IEEE.numeric_std.all;
+
+entity mem_tb is end entity mem_tb;
+
+architecture testbench of mem_tb is
+    component mem
+        generic (
+            DATA_WIDTH : natural := 8;
+            ADDR_WIDTH : natural := 8
+        );
+
+        port (
+            addr : in natural range 0 to 2 ** ADDR_WIDTH - 1;
+            q : out std_logic_vector((DATA_WIDTH - 1) downto 0)
+        );
+    end component;
+    signal addr_t : natural range 0 to 255 := 0;
+    signal q_t : std_logic_vector(7 downto 0);
+    signal success : boolean := true;
+begin
+
+    rom_1 : mem generic map(DATA_WIDTH => 8, ADDR_WIDTH => 8) port map(addr => addr_t, q => q_t);
+    process begin
+        for addr_pos in 0 to 2 ** 8 - 1 loop
+            addr_t <= natural(addr_pos);
+            wait for 10 ns;
+            if addr_t /= to_integer(unsigned(q_t)) then
+                success <= false;
+            end if;
+            assert addr_t = to_integer(unsigned(q_t)) report "unexpected value " & integer'image(to_integer(unsigned(q_t))) & " at " & natural'image(addr_t) severity error;
+        end loop;
+        if success then
+            report "testbench mem_tb succesful!";
+        else
+            report "testbench mem_tb failed!";
+        end if;
+        wait;
+    end process;
+
+end architecture testbench;
