@@ -12,7 +12,7 @@ entity data_memory is
         addr : in natural range 0 to 2 ** ADDR_WIDTH - 1;
         data : in std_logic_vector((DATA_WIDTH - 1) downto 0);
         we : in std_logic := '1';
-        q : out std_logic_vector((DATA_WIDTH - 1) downto 0);
+        q : out std_logic_vector((DATA_WIDTH - 1) downto 0)
     );
 end data_memory;
 
@@ -33,7 +33,7 @@ architecture rtl of data_memory is
     signal ram : memory_t := init_ram;
     -- signal addr_reg : natural range 0 to 2 ** ADDR_WIDTH - 1;
 begin
-    process (clk)
+    process (clk, we, addr, data)
     begin
         if (rising_edge(clk)) then
             if (we = '1') then

@@ -32,9 +32,9 @@ begin
             assert addr_t = to_integer(unsigned(q_t)) report "unexpected value " & integer'image(to_integer(unsigned(q_t))) & " at " & natural'image(addr_t) severity error;
         end loop;
         if success then
-            report "testbench mem_tb succesful!";
+            report "testbench instruction_memory_tb succesful!";
         else
-            report "testbench mem_tb failed!";
+            report "testbench instruction_memory_tb failed!";
         end if;
         wait;
     end process;
