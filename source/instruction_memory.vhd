@@ -2,7 +2,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity mem is
+entity instruction_memory is
     generic (
         DATA_WIDTH : natural := 8;
         ADDR_WIDTH : natural := 8
@@ -14,7 +14,7 @@ entity mem is
     );
 end entity;
 
-architecture rtl of mem is
+architecture rtl of instruction_memory is
     subtype word_t is std_logic_vector((DATA_WIDTH - 1) downto 0);
     type memory_t is array(2 ** ADDR_WIDTH - 1 downto 0) of word_t;
 

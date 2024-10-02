@@ -2,10 +2,10 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
-entity mem_tb is end entity mem_tb;
+entity instruction_memory_tb is end entity instruction_memory_tb;
 
-architecture testbench of mem_tb is
-    component mem
+architecture testbench of instruction_memory_tb is
+    component instruction_memory
         generic (
             DATA_WIDTH : natural := 8;
             ADDR_WIDTH : natural := 8
@@ -21,7 +21,7 @@ architecture testbench of mem_tb is
     signal success : boolean := true;
 begin
 
-    rom_1 : mem generic map(DATA_WIDTH => 8, ADDR_WIDTH => 8) port map(addr => addr_t, q => q_t);
+    rom_1 : instruction_memory generic map(DATA_WIDTH => 8, ADDR_WIDTH => 8) port map(addr => addr_t, q => q_t);
     process begin
         for addr_pos in 0 to 2 ** 8 - 1 loop
             addr_t <= natural(addr_pos);
