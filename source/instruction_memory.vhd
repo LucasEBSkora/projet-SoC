@@ -15,17 +15,18 @@ entity instruction_memory is
 end entity;
 
 architecture rtl of instruction_memory is
+    constant MAX_ADDR : natural := 2 ** ADDR_WIDTH - 1;
+
     subtype word_t is std_logic_vector((DATA_WIDTH - 1) downto 0);
-    type memory_t is array(2 ** ADDR_WIDTH - 1 downto 0) of word_t;
+    type memory_t is array(MAX_ADDR downto 0) of word_t;
 
     function init_rom
         return memory_t is
         variable tmp : memory_t := (others => (others => '0'));
     begin
-        for addr_pos in 0 to 2 ** ADDR_WIDTH - 1 loop
+        for addr_pos in 0 to MAX_ADDR loop
             tmp(addr_pos) := std_logic_vector(to_unsigned(addr_pos, DATA_WIDTH));
         end loop;
-        -- tmp(0) := x"FF";
         return tmp;
     end init_rom;
 

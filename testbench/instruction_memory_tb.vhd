@@ -22,14 +22,17 @@ architecture testbench of instruction_memory_tb is
 begin
 
     rom_1 : instruction_memory generic map(DATA_WIDTH => 8, ADDR_WIDTH => 8) port map(addr => addr_t, q => q_t);
-    process begin
+    process
+        variable data : integer;
+    begin
         for addr_pos in 0 to 2 ** 8 - 1 loop
             addr_t <= natural(addr_pos);
             wait for 10 ns;
-            if addr_t /= to_integer(unsigned(q_t)) then
+            data := to_integer(unsigned(q_t));
+            if addr_t /= data then
                 success <= false;
             end if;
-            assert addr_t = to_integer(unsigned(q_t)) report "unexpected value " & integer'image(to_integer(unsigned(q_t))) & " at " & natural'image(addr_t) severity error;
+            assert addr_t = data report "unexpected value " & integer'image(data) & " at " & natural'image(addr_t) severity error;
         end loop;
         if success then
             report "testbench instruction_memory_tb succesful!";
