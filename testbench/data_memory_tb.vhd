@@ -34,14 +34,17 @@ begin
 
     clk_t <= not clk_t after 5 ns;
 
-    process begin
+    process
+        variable data_int : integer;
+    begin
         wait for 5 ns;
         for addr_pos in 0 to 7 loop
             addr_t <= natural(addr_pos);
-            if addr_t /= to_integer(unsigned(data_out)) then
+            data_int := to_integer(unsigned(data_out));
+            if addr_t /= data_int then
                 success <= false;
             end if;
-            assert addr_t = to_integer(unsigned(data_out)) report "unexpected value " & integer'image(to_integer(unsigned(data_out))) & " at " & natural'image(addr_t) severity error;
+            assert addr_t = data_int report "unexpected value " & integer'image(data_int) & " at " & natural'image(addr_t) severity error;
             wait for 10 ns;
         end loop;
 
@@ -55,10 +58,11 @@ begin
         write_enable <= '0';
         for addr_pos in 0 to 2 ** addr_width - 1 loop
             addr_t <= natural(addr_pos);
-            if unsigned(data_out) /= 7 - addr_t then
+            data_int := to_integer(unsigned(data_out));
+            if data_int /= 7 - addr_t then
                 success <= false;
             end if;
-            assert unsigned(data_out) = 7 - addr_t report "unexpected value " & integer'image(to_integer(unsigned(data_out))) & " at " & natural'image(addr_t) severity error;
+            assert data_int = 7 - addr_t report "unexpected value " & integer'image(data_int) & " at " & natural'image(addr_t) severity error;
             wait for 10 ns;
         end loop;
         if success then

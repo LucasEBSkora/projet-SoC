@@ -17,21 +17,22 @@ entity data_memory is
 end data_memory;
 
 architecture rtl of data_memory is
+    constant MAX_ADDR : natural := 2 ** ADDR_WIDTH - 1;
+
     subtype word_t is std_logic_vector((DATA_WIDTH - 1) downto 0);
-    type memory_t is array(2 ** ADDR_WIDTH - 1 downto 0) of word_t;
+    type memory_t is array(MAX_ADDR downto 0) of word_t;
 
     function init_ram
         return memory_t is
         variable tmp : memory_t := (others => (others => '0'));
     begin
-        for addr_pos in 0 to 2 ** ADDR_WIDTH - 1 loop
+        for addr_pos in 0 to MAX_ADDR loop
             tmp(addr_pos) := std_logic_vector(to_unsigned(addr_pos, DATA_WIDTH));
         end loop;
         return tmp;
     end init_ram;
 
     signal ram : memory_t := init_ram;
-    -- signal addr_reg : natural range 0 to 2 ** ADDR_WIDTH - 1;
 begin
     process (clk, we, addr, data)
     begin
@@ -39,7 +40,6 @@ begin
             if (we = '1') then
                 ram(addr) <= data;
             end if;
-            -- addr_reg <= addr;
         end if;
     end process;
     q <= ram(addr);
