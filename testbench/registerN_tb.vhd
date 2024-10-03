@@ -59,9 +59,9 @@ begin
         check_value(data_out, value2);
 
         if success then
-            report "testbench registerN_tb succesful!";
+            report "testbench registerN succesful!";
         else
-            report "testbench registerN_tb failed!";
+            report "testbench registerN failed!";
         end if;
         wait;
     end process;

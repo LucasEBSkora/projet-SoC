@@ -8,6 +8,7 @@ end entity register_bank_tb;
 architecture rtl of register_bank_tb is
     constant WORD_WIDTH : natural := 32;
     constant ADDR_WIDTH : natural := 5;
+    constant MAX_ADDR : natural := 2 ** ADDR_WIDTH - 1;
 
     component register_bank
         generic (
@@ -17,9 +18,9 @@ architecture rtl of register_bank_tb is
         port (
             clk : in std_logic;
             write_enable : in std_logic;
-            RW : in std_logic_vector(ADDR_WIDTH - 1 downto 0);
-            RA : in std_logic_vector(ADDR_WIDTH - 1 downto 0);
-            RB : in std_logic_vector(ADDR_WIDTH - 1 downto 0);
+            RW : in natural range 0 to 2 ** ADDR_WIDTH - 1;
+            RA : in natural range 0 to 2 ** ADDR_WIDTH - 1;
+            RB : in natural range 0 to 2 ** ADDR_WIDTH - 1;
             busW : in std_logic_vector(WORD_WIDTH - 1 downto 0);
             busA : out std_logic_vector(WORD_WIDTH - 1 downto 0);
             busB : out std_logic_vector(WORD_WIDTH - 1 downto 0)
@@ -28,9 +29,9 @@ architecture rtl of register_bank_tb is
 
     signal clk : std_logic := '0';
     signal we : std_logic := '0';
-    signal sel_W : std_logic_vector(ADDR_WIDTH - 1 downto 0);
-    signal sel_A : std_logic_vector(ADDR_WIDTH - 1 downto 0);
-    signal sel_B : std_logic_vector(ADDR_WIDTH - 1 downto 0);
+    signal sel_W : natural range 0 to MAX_ADDR;
+    signal sel_A : natural range 0 to MAX_ADDR;
+    signal sel_B : natural range 0 to MAX_ADDR;
     signal data_in : std_logic_vector(WORD_WIDTH - 1 downto 0);
     signal data_A : std_logic_vector(WORD_WIDTH - 1 downto 0);
     signal data_B : std_logic_vector(WORD_WIDTH - 1 downto 0);
@@ -45,61 +46,61 @@ begin
 
     clk <= not clk after 5 ns;
 
-    proc_name : process
+    process
+        procedure check_value(register_n : natural range 0 to MAX_ADDR; expected : integer; actual : integer; prefix : string := "") is begin
+            if expected /= actual then
+                success <= false;
+                assert false report prefix & " register " & natural'image(register_n) & " should have value " & integer'image(expected)
+                & " but has " & integer'image(actual) severity error;
+            end if;
+        end;
+        constant HALF_ADDR : natural := 2 ** (ADDR_WIDTH - 1);
     begin
         we <= '1';
 
         wait for 4 ns;
 
         data_in <= (others => '1');
-        sel_W <= (others => '0');
-        sel_A <= (others => '0');
+        sel_W <= 0;
+        sel_A <= 0;
         wait for 10 ns;
-
-        if 0 /= to_integer(unsigned(data_A)) then
-            success <= false;
-            assert false report "register 0 has value  " & integer'image(to_integer(unsigned(data_A))) severity error;
-        end if;
-
-        for i in 1 to 2 ** ADDR_WIDTH - 1 loop
+        check_value(0, 0, to_integer(signed(data_A)));
+        for i in 1 to MAX_ADDR loop
             data_in <= std_logic_vector(to_unsigned((2 ** ADDR_WIDTH - 1) - natural(i), WORD_WIDTH));
-            sel_W <= std_logic_vector(to_unsigned(i, addr_width));
-            sel_A <= std_logic_vector(to_unsigned(natural(i) - 1, addr_width));
+            sel_W <= i;
+            sel_A <= i - 1;
 
-            sel_B <= std_logic_vector(to_unsigned(i, addr_width));
+            sel_B <= i;
             wait for 10 ns;
-            if i > 1 and (2 ** ADDR_WIDTH) - i /= to_integer(unsigned(data_A)) then
-                success <= false;
-                assert false report "unexpected previous value " & integer'image(to_integer(unsigned(data_A))) & " at " & natural'image(i - 1) severity error;
+            if i > 1 then
+                check_value(i - 1, MAX_ADDR - (i - 1), to_integer(signed(data_A)), "previous");
             end if;
-            if (2 ** ADDR_WIDTH - 1) - i /= to_integer(unsigned(data_B)) then
-                success <= false;
-                assert false report "unexpected value " & integer'image(to_integer(unsigned(data_B))) & " at " & natural'image(i) severity error;
-            end if;
+            check_value(i, MAX_ADDR - i, to_integer(signed(data_B)), "current");
+
         end loop;
 
         we <= '0';
         data_in <= (others => '1');
         wait for 20 ns;
 
-        for i in 0 to 2**(ADDR_WIDTH - 1) - 1 loop
-        sel_A <= '0' & std_logic_vector(to_unsigned(i, addr_width-1));
-        sel_B <= '1' & std_logic_vector(to_unsigned(i, addr_width-1));
+        for i in 0 to HALF_ADDR - 1 loop
+            sel_A <= i;
+            sel_B <= HALF_ADDR + i;
 
-        wait for 10 ns;
+            wait for 10 ns;
+            if i /= 0 then
+                check_value(i, MAX_ADDR - i, to_integer(signed(data_A)), "lower");
+            end if;
 
-        if i /= 0 and (2 ** ADDR_WIDTH - 1) - i /= to_integer(unsigned(data_A)) then
-            success <= false;
-            assert false report "unexpected lower value " & integer'image(to_integer(unsigned(data_A))) & " at " & natural'image(i) severity error;
-        end if;
+            check_value(HALF_ADDR + i, (HALF_ADDR - 1) - i, to_integer(signed(data_B)), "upper");
 
-        if (2 ** (ADDR_WIDTH - 1) - 1) - i /= to_integer(unsigned(data_B)) then
-            success <= false;
-            assert false report "unexpected upper value " & integer'image(to_integer(unsigned(data_B))) & " at " & natural'image(2**(ADDR_WIDTH - 1) + i) severity error;
-        end if;
-        
         end loop;
+        if success then
+            report "testbench register_bank succesful!";
+        else
+            report "testbench register_bank failed!";
+        end if;
         wait;
-    end process proc_name;
+    end process;
 
 end architecture rtl;
