@@ -31,31 +31,33 @@ begin
 
     clk_t <= not clk_t after 5 ns;
 
-    process begin
+    process
+        subtype word is std_logic_vector((WORD_WIDTH - 1) downto 0);
+        constant value1 : word := x"89ABCDEF";
+        constant value2 : word := x"ABABABAB";
+
+        procedure check_value(expected : word; actual : word) is begin
+            if expected /= actual then
+                success <= false;
+                assert false report "register output should be" & integer'image(to_integer(signed(expected))) & " is " & integer'image(to_integer(signed(actual))) severity error;
+            end if;
+        end;
+    begin
         wait for 5 ns;
         write_enable <= '1';
-        data_in <= x"89ABCDEF";
+        data_in <= value1;
         wait for 10 ns;
-        if data_out /= x"89ABCDEF" then
-            success <= false;
-        end if;
-        assert data_in = x"89ABCDEF" report "register output should be 0x89ABCDEF, is " & integer'image(to_integer(unsigned(data_out))) severity error;
+        check_value(data_out, value1);
 
         write_enable <= '0';
-        data_in <= x"ABABABAB";
+        data_in <= value2;
         wait for 10 ns;
-        if data_out /= x"89ABCDEF" then
-            success <= false;
-        end if;
-        assert data_out = x"89ABCDEF" report "register output should still be 0x89ABCDEF, is " & integer'image(to_integer(unsigned(data_out))) severity error;
+        check_value(data_out, value1);
 
         write_enable <= '1';
         wait for 10 ns;
+        check_value(data_out, value2);
 
-        if data_out /= x"ABABABAB" then
-            success <= false;
-        end if;
-        assert data_out = x"ABABABAB" report "register output should still be 0xABABABAB, is " & integer'image(to_integer(unsigned(data_out))) severity error;
         if success then
             report "testbench registerN_tb succesful!";
         else
