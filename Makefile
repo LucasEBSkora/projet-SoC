@@ -1,5 +1,5 @@
 # vhdl files
-FILES = source/*
+FILES = packages/*.vhd source/*.vhd
 
 # testbench
 TESTBENCHPATH = testbench/${TESTBENCHFILE}*

@@ -1,12 +1,15 @@
 library IEEE;
+library WORK;
+
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
+use WORK.constants.all;
+
 entity controller_tb is
 end entity controller_tb;
 
 architecture rtl of controller_tb is
     subtype instruction is std_logic_vector(31 downto 0);
-    subtype alu_op_sel is unsigned(3 downto 0);
     subtype register_addr is std_logic_vector(4 downto 0);
 
     component controller
@@ -56,17 +59,6 @@ begin
             check(reg_s1 = rs1, "source register 1 should be " & integer'image(to_integer(unsigned(rs1))) & ", is " & integer'image(to_integer(unsigned(reg_s1))) & " for instruction " & instruction_name);
             check(reg_s2 = rs2, "source register 2 should be " & integer'image(to_integer(unsigned(rs2))) & ", is " & integer'image(to_integer(unsigned(reg_s2))) & " for instruction " & instruction_name);
         end procedure;
-
-        constant SEL_ADD : alu_op_sel := "0000";
-        constant SEL_SUB : alu_op_sel := "1000";
-        constant SEL_SLL : alu_op_sel := "0001";
-        constant SEL_SLT : alu_op_sel := "0010";
-        constant SEL_SLTU : alu_op_sel := "0011";
-        constant SEL_XOR : alu_op_sel := "0100";
-        constant SEL_SRL : alu_op_sel := "0101";
-        constant SEL_SRA : alu_op_sel := "1101";
-        constant SEL_OR : alu_op_sel := "0110";
-        constant SEL_AND : alu_op_sel := "0111";
 
         constant INSTRUCTION_R_ADD : instruction := B"0000000_11111_00000_000_01010_0110011";
         constant INSTRUCTION_R_SUB : instruction := B"0100000_01010_11110_000_00001_0110011";
