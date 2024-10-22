@@ -18,6 +18,7 @@ architecture rtl of register_bank_tb is
         port (
             clk : in std_logic;
             write_enable : in std_logic;
+            reset : in std_logic;
             RW : in natural range 0 to 2 ** ADDR_WIDTH - 1;
             RA : in natural range 0 to 2 ** ADDR_WIDTH - 1;
             RB : in natural range 0 to 2 ** ADDR_WIDTH - 1;
@@ -29,6 +30,7 @@ architecture rtl of register_bank_tb is
 
     signal clk : std_logic := '0';
     signal we : std_logic := '0';
+    signal reset : std_logic := '0';
     signal sel_W : natural range 0 to MAX_ADDR;
     signal sel_A : natural range 0 to MAX_ADDR;
     signal sel_B : natural range 0 to MAX_ADDR;
@@ -41,7 +43,7 @@ begin
 
     bank : register_bank generic map(WORD_WIDTH => WORD_WIDTH, ADDR_WIDTH => ADDR_WIDTH)
     port map(
-        clk => clk, write_enable => we, RW => sel_W, RA => sel_A, RB => sel_B,
+        clk => clk, write_enable => we, reset => reset, RW => sel_W, RA => sel_A, RB => sel_B,
         busW => data_in, busA => data_A, busB => data_B);
 
     clk <= not clk after 5 ns;
@@ -95,6 +97,22 @@ begin
             check_value(HALF_ADDR + i, (HALF_ADDR - 1) - i, to_integer(signed(data_B)), "upper");
 
         end loop;
+
+        reset <= '1';
+
+        wait for 10 ns;
+
+        reset <= '0';
+
+        wait for 10 ns;
+
+        for i in 1 to MAX_ADDR loop
+            sel_B <= i;
+            wait for 10 ns;
+            check_value(i, 0, to_integer(signed(data_B)), "reset");
+
+        end loop;
+
         if success then
             report "testbench register_bank succesful!";
         else

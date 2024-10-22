@@ -9,6 +9,7 @@ entity register_bank is
     );
     port (
         clk : in std_logic;
+        reset : in std_logic;
         write_enable : in std_logic;
         RW : in natural range 0 to 2 ** ADDR_WIDTH - 1;
         RA : in natural range 0 to 2 ** ADDR_WIDTH - 1;
@@ -28,6 +29,7 @@ architecture rtl of register_bank is
             data_in : in std_logic_vector(WORD_WIDTH - 1 downto 0);
             data_out : out std_logic_vector(WORD_WIDTH - 1 downto 0);
             write_enable : in std_logic;
+            reset : in std_logic;
             clk : in std_logic
         );
     end component;
@@ -44,7 +46,7 @@ begin
     registers :
     for i in 1 to MAX_ADDR generate
         regI : registerN generic map(WORD_WIDTH => WORD_WIDTH)
-        port map(data_in => busW, data_out => data_outs(i), write_enable => write_enables(i), clk => clk);
+        port map(data_in => busW, data_out => data_outs(i), write_enable => write_enables(i), reset => reset, clk => clk);
 
         write_enables(i) <= write_enable when RW = i else
         '0';

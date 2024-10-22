@@ -15,11 +15,13 @@ architecture rtl of registerN_tb is
             data_in : in std_logic_vector(WORD_WIDTH - 1 downto 0);
             data_out : out std_logic_vector(WORD_WIDTH - 1 downto 0);
             write_enable : in std_logic;
+            reset : in std_logic;
             clk : in std_logic
         );
     end component;
 
     signal clk_t : std_logic := '1';
+    signal reset : std_logic := '0';
     signal data_in : std_logic_vector((WORD_WIDTH - 1) downto 0);
     signal write_enable : std_logic := '0';
     signal data_out : std_logic_vector((WORD_WIDTH - 1) downto 0);
@@ -27,7 +29,7 @@ architecture rtl of registerN_tb is
     signal success : boolean := true;
 begin
     reg : registerN generic map(WORD_WIDTH => WORD_WIDTH)
-    port map(data_in => data_in, data_out => data_out, write_enable => write_enable, clk => clk_t);
+    port map(data_in => data_in, data_out => data_out, write_enable => write_enable, reset => reset, clk => clk_t);
 
     clk_t <= not clk_t after 5 ns;
 
@@ -35,6 +37,7 @@ begin
         subtype word is std_logic_vector((WORD_WIDTH - 1) downto 0);
         constant value1 : word := x"89ABCDEF";
         constant value2 : word := x"ABABABAB";
+        constant zero : word := x"00000000";
 
         procedure check_value(expected : word; actual : word) is begin
             if expected /= actual then
@@ -57,6 +60,10 @@ begin
         write_enable <= '1';
         wait for 10 ns;
         check_value(data_out, value2);
+
+        reset <= '1';
+        wait for 10 ns;
+        check_value(data_out, zero);
 
         if success then
             report "testbench registerN succesful!";

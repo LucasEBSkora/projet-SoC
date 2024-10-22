@@ -27,7 +27,7 @@ begin
     begin
         for addr_pos in 0 to 2 ** 8 - 1 loop
             addr_t <= natural(addr_pos);
-            wait for 10 ns;
+            wait for 1 ns;
             data := to_integer(unsigned(q_t));
             if addr_t /= data then
                 success <= false;

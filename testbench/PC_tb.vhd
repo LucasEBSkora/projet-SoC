@@ -16,12 +16,14 @@ architecture rtl of PC_tb is
         port (
             load : in std_logic;
             clk : in std_logic;
+            reset : in std_logic;
             addr_in : in natural range 0 to 2 ** ADDR_WIDTH - 1;
             addr_out : out natural range 0 to 2 ** ADDR_WIDTH - 1
         );
     end component PC;
 
     signal clk : std_logic := '0';
+    signal reset : std_logic := '0';
     signal load : std_logic := '0';
     signal addr_in : natural range 0 to MAX_ADDR := 0;
     signal addr_out : natural range 0 to MAX_ADDR;
@@ -30,7 +32,7 @@ architecture rtl of PC_tb is
 begin
 
     uut : PC generic map(ADDR_WIDTH => ADDR_WIDTH)
-    port map(load => load, clk => clk, addr_in => addr_in, addr_out => addr_out);
+    port map(load => load, clk => clk, addr_in => addr_in, reset => reset, addr_out => addr_out);
     clk <= not clk after 5 ns;
 
     process
@@ -63,6 +65,10 @@ begin
 
         check(addr_out = value + 4, "PC did not increment properly! value is " & natural'image(addr_out));
 
+        reset <= '1';
+        wait for 10 ns;
+
+        check(addr_out = 0, "PC did not reset! value is " & natural'image(addr_out));
         if success then
             report "testbench PC succesful!";
         else
