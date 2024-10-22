@@ -9,16 +9,16 @@ end entity ALU_tb;
 
 architecture rtl of ALU_tb is
     constant WORD_WIDTH : natural := 32;
-    subtype word is signed(WORD_WIDTH - 1 downto 0);
+    subtype word is std_logic_vector(WORD_WIDTH - 1 downto 0);
 
     component ALU
         generic (
             WORD_WIDTH : natural := 32
         );
         port (
-            opA : in signed(WORD_WIDTH - 1 downto 0);
-            opB : in signed(WORD_WIDTH - 1 downto 0);
-            res : out signed(WORD_WIDTH - 1 downto 0);
+            opA : in std_logic_vector(WORD_WIDTH - 1 downto 0);
+            opB : in std_logic_vector(WORD_WIDTH - 1 downto 0);
+            res : out std_logic_vector(WORD_WIDTH - 1 downto 0);
             aluOp : in unsigned(3 downto 0)
         );
     end component ALU;
@@ -88,6 +88,28 @@ begin
         check_result(X"12481248", X"00000005", SEL_SLL, X"49024900");
         check_result(X"00010000", X"00000001", SEL_SLL, X"00020000");
 
+        check_result(X"00000000", X"00000000", SEL_SLT, X"00000000");
+        check_result(X"00000000", X"00000001", SEL_SLT, X"00000001");
+        check_result(X"00000001", X"00000001", SEL_SLT, X"00000000");
+        check_result(X"FFFFFFFF", X"00000001", SEL_SLT, X"00000001");
+        check_result(X"AABBAABB", X"00BB00BB", SEL_SLT, X"00000001");
+        check_result(X"00000001", X"FFFFFFFF", SEL_SLT, X"00000000");
+        check_result(X"00000045", X"00000018", SEL_SLT, X"00000000");
+        check_result(X"00000018", X"00000045", SEL_SLT, X"00000001");
+        check_result(X"12345678", X"11111111", SEL_SLT, X"00000000");
+        check_result(X"00010000", X"00000001", SEL_SLT, X"00000000");
+
+        check_result(X"00000000", X"00000000", SEL_SLTU, X"00000000");
+        check_result(X"00000000", X"00000001", SEL_SLTU, X"00000001");
+        check_result(X"00000001", X"00000001", SEL_SLTU, X"00000000");
+        check_result(X"FFFFFFFF", X"00000001", SEL_SLTU, X"00000000");
+        check_result(X"AABBAABB", X"00BB00BB", SEL_SLTU, X"00000000");
+        check_result(X"00000001", X"FFFFFFFF", SEL_SLTU, X"00000001");
+        check_result(X"00000045", X"00000018", SEL_SLTU, X"00000000");
+        check_result(X"00000018", X"00000045", SEL_SLTU, X"00000001");
+        check_result(X"12345678", X"11111111", SEL_SLTU, X"00000000");
+        check_result(X"00010000", X"00000001", SEL_SLTU, X"00000000");
+
         check_result(X"00000000", X"00000000", SEL_XOR, X"00000000");
         check_result(X"FFFFFFFF", X"FFFFFFFF", SEL_XOR, X"00000000");
         check_result(X"FFFFFFFF", X"00000000", SEL_XOR, X"FFFFFFFF");
@@ -98,6 +120,28 @@ begin
         check_result(X"12345678", X"11111111", SEL_XOR, X"03254769");
         check_result(X"00000018", X"00000045", SEL_XOR, X"0000005D");
         check_result(X"00010000", X"00000001", SEL_XOR, X"00010001");
+
+        check_result(X"00000000", X"00000000", SEL_SRL, X"00000000");
+        check_result(X"FFFFFFFF", X"FFFFFFFF", SEL_SRL, X"00000001");
+        check_result(X"FFFFFFFF", X"7FFFFF04", SEL_SRL, X"0FFFFFFF");
+        check_result(X"0A0A0A0A", X"00000004", SEL_SRL, X"00A0A0A0");
+        check_result(X"00000100", X"00000008", SEL_SRL, X"00000001");
+        check_result(X"45000000", X"00000018", SEL_SRL, X"00000045");
+        check_result(X"FFFFFFFF", X"00000005", SEL_SRL, X"07FFFFFF");
+        check_result(X"12345678", X"00000003", SEL_SRL, X"02468ACF");
+        check_result(X"12481248", X"00000005", SEL_SRL, X"00924092");
+        check_result(X"00010000", X"00000001", SEL_SRL, X"00008000");
+
+        check_result(X"00000000", X"00000000", SEL_SRA, X"00000000");
+        check_result(X"FFFFFFFF", X"FFFFFFFF", SEL_SRA, X"FFFFFFFF");
+        check_result(X"7FFFFF04", X"FFFFFFFF", SEL_SRA, X"00000000");
+        check_result(X"0A0A0A0A", X"00000004", SEL_SRA, X"00A0A0A0");
+        check_result(X"00000100", X"00000008", SEL_SRA, X"00000001");
+        check_result(X"45000000", X"00000018", SEL_SRA, X"00000045");
+        check_result(X"FFFFFFFF", X"00000005", SEL_SRA, X"FFFFFFFF");
+        check_result(X"12345678", X"00000003", SEL_SRA, X"02468ACF");
+        check_result(X"12481248", X"00000005", SEL_SRA, X"00924092");
+        check_result(X"00010000", X"00000001", SEL_SRA, X"00008000");
 
         check_result(X"00000000", X"00000000", SEL_OR, X"00000000");
         check_result(X"00000000", X"00000001", SEL_OR, X"00000001");
