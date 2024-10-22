@@ -40,7 +40,7 @@ begin
 
     with aluOp select result <=
         ("0" & opA) + opB when SEL_ADD,
-        -- opA - opB when SEL_SUB,
+        ("0" & opA) - opB when SEL_SUB,
         -- res_sll when SEL_SLL,
         -- res_slt when SEL_SLT,
         -- res_sltu when SEL_SLTU,

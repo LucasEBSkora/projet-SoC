@@ -66,6 +66,18 @@ begin
         check_result(X"00000002", X"00000001", SEL_ADD, X"00000003");
         check_result(X"12345678", X"11111111", SEL_ADD, X"23456789");
 
+        check_result(X"00000000", X"00000000", SEL_SUB, X"00000000");
+        check_result(X"00000000", X"00000001", SEL_SUB, X"FFFFFFFF");
+        check_result(X"00000001", X"00000001", SEL_SUB, X"00000000");
+        check_result(X"FFFFFFFF", X"FFFFFFFF", SEL_SUB, X"00000000");
+        check_result(X"AABBAABB", X"00BB00BB", SEL_SUB, X"AA00AA00");
+        check_result(X"00000001", X"FFFFFFFF", SEL_SUB, X"00000002");
+        check_result(X"00000045", X"00000018", SEL_SUB, X"0000002D");
+        check_result(X"00000018", X"00000045", SEL_SUB, X"FFFFFFD3");
+        check_result(X"12345678", X"11111111", SEL_SUB, X"01234567");
+        check_result(X"00010000", X"00000001", SEL_SUB, X"0000FFFF");
+        
+
         if success then
             report "testbench PC succesful!";
         else
