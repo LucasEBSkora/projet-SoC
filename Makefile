@@ -8,7 +8,7 @@ WORKDIR = work
 
 #GHDL CONFIG
 GHDL_CMD = ghdl
-GHDL_FLAGS  = --ieee=synopsys --warn-no-vital-generic --workdir=$(WORKDIR)
+GHDL_FLAGS  = --ieee=synopsys --warn-no-vital-generic --workdir=$(WORKDIR) --std=08
 
 STOP_TIME = 1us
 # Simulation break condition
