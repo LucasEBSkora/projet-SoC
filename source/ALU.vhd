@@ -17,33 +17,23 @@ entity ALU is
 end entity ALU;
 
 architecture rtl of ALU is
-
-    signal opA_signed, opB_signed : signed(WORD_WIDTH - 1 downto 0) := (others => '0');
-    signal opA_unsigned, opB_unsigned : unsigned(WORD_WIDTH - 1 downto 0) := (others => '0');
-
     signal shift : natural range 0 to 31 := 0;
     signal res_sll, res_slt, res_sltu, res_srl, res_sra : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
 begin
 
-    opA_signed <= signed(opA);
-    opB_signed <= signed(opB);
-
-    opA_unsigned <= unsigned(opA);
-    opB_unsigned <= unsigned(opB);
-
     shift <= to_integer(unsigned(opB(4 downto 0)));
 
     res_sll <= opA((WORD_WIDTH - 1 - shift) downto 0) & (shift - 1 downto 0 => '0');
-    res_slt <= (WORD_WIDTH - 1 downto 1 => '0') & '1' when opA_signed < opB_signed else
+    res_slt <= (WORD_WIDTH - 1 downto 1 => '0') & '1' when signed(opA) < signed(opB) else
         (WORD_WIDTH - 1 downto 1 => '0') & '0';
-    res_sltu <= (WORD_WIDTH - 1 downto 1 => '0') & '1' when opA_unsigned < opB_unsigned else
+    res_sltu <= (WORD_WIDTH - 1 downto 1 => '0') & '1' when unsigned(opA) < unsigned(opB) else
         (WORD_WIDTH - 1 downto 1 => '0') & '0';
     res_srl <= (shift - 1 downto 0 => '0') & opA(WORD_WIDTH - 1 downto shift);
     res_sra <= (shift - 1 downto 0 => opA(WORD_WIDTH - 1)) & opA(WORD_WIDTH - 1 downto shift);
 
     with aluOp select res <=
-        std_logic_vector(opA_signed + opB_signed) when SEL_ADD,
-        std_logic_vector(opA_signed - opB_signed) when SEL_SUB,
+        std_logic_vector(signed(opA) + signed(opB)) when SEL_ADD,
+        std_logic_vector(signed(opA) - signed(opB)) when SEL_SUB,
         res_sll when SEL_SLL,
         res_slt when SEL_SLT,
         res_sltu when SEL_SLTU,
