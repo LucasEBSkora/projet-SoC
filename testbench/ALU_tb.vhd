@@ -77,6 +77,17 @@ begin
         check_result(X"12345678", X"11111111", SEL_SUB, X"01234567");
         check_result(X"00010000", X"00000001", SEL_SUB, X"0000FFFF");
 
+        check_result(X"00000000", X"00000000", SEL_SLL, X"00000000");
+        check_result(X"FFFFFFFF", X"FFFFFFFF", SEL_SLL, X"80000000");
+        check_result(X"FFFFFFFF", X"7FFFFF04", SEL_SLL, X"FFFFFFF0");
+        check_result(X"0A0A0A0A", X"00000004", SEL_SLL, X"A0A0A0A0");
+        check_result(X"00000001", X"00000008", SEL_SLL, X"00000100");
+        check_result(X"00000045", X"00000018", SEL_SLL, X"45000000");
+        check_result(X"FFFFFFFF", X"00000005", SEL_SLL, X"FFFFFFE0");
+        check_result(X"12345678", X"00000003", SEL_SLL, X"91A2B3C0");
+        check_result(X"12481248", X"00000005", SEL_SLL, X"49024900");
+        check_result(X"00010000", X"00000001", SEL_SLL, X"00020000");
+
         check_result(X"00000000", X"00000000", SEL_XOR, X"00000000");
         check_result(X"FFFFFFFF", X"FFFFFFFF", SEL_XOR, X"00000000");
         check_result(X"FFFFFFFF", X"00000000", SEL_XOR, X"FFFFFFFF");
