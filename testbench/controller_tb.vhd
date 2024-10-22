@@ -10,7 +10,7 @@ end entity controller_tb;
 
 architecture rtl of controller_tb is
     subtype instruction is std_logic_vector(31 downto 0);
-    subtype register_addr is std_logic_vector(4 downto 0);
+    subtype register_addr is natural range 0 to 31;
 
     component controller
         port (
@@ -18,9 +18,9 @@ architecture rtl of controller_tb is
             reg_we : out std_logic;
             pc_load : out std_logic;
             alu_op : out unsigned(3 downto 0);
-            reg_dest : out std_logic_vector(4 downto 0);
-            reg_s1 : out std_logic_vector(4 downto 0);
-            reg_s2 : out std_logic_vector(4 downto 0)
+            reg_dest : out natural range 0 to 31;
+            reg_s1 : out natural range 0 to 31;
+            reg_s2 : out natural range 0 to 31
         );
     end component controller;
 
@@ -55,9 +55,9 @@ begin
             wait for 1 ns;
 
             check(alu_op = expected_op, "ALU OP should be " & integer'image(to_integer(unsigned(expected_op))) & ", is " & integer'image(to_integer(unsigned(alu_op))) & " for instruction " & instruction_name);
-            check(reg_dest = rd, "destination register should be " & integer'image(to_integer(unsigned(rd))) & ", is " & integer'image(to_integer(unsigned(reg_dest))) & " for instruction " & instruction_name);
-            check(reg_s1 = rs1, "source register 1 should be " & integer'image(to_integer(unsigned(rs1))) & ", is " & integer'image(to_integer(unsigned(reg_s1))) & " for instruction " & instruction_name);
-            check(reg_s2 = rs2, "source register 2 should be " & integer'image(to_integer(unsigned(rs2))) & ", is " & integer'image(to_integer(unsigned(reg_s2))) & " for instruction " & instruction_name);
+            check(reg_dest = rd, "destination register should be " & integer'image(rd) & ", is " & integer'image(reg_dest) & " for instruction " & instruction_name);
+            check(reg_s1 = rs1, "source register 1 should be " & integer'image(rs1) & ", is " & integer'image(reg_s1) & " for instruction " & instruction_name);
+            check(reg_s2 = rs2, "source register 2 should be " & integer'image(rs2) & ", is " & integer'image(reg_s2) & " for instruction " & instruction_name);
         end procedure;
 
         constant INSTRUCTION_R_ADD : instruction := B"0000000_11111_00000_000_01010_0110011";
@@ -77,16 +77,16 @@ begin
         check(reg_we = '1', "register write enable not set!");
         check(pc_load = '0', "PC load set incorrectly!");
 
-        check_instruction(INSTRUCTION_R_ADD, SEL_ADD, "01010", "00000", "11111", "INSTRUCTION_R_ADD");
-        check_instruction(INSTRUCTION_R_SUB, SEL_SUB, "00001", "11110", "01010", "INSTRUCTION_R_SUB");
-        check_instruction(INSTRUCTION_R_SLL, SEL_SLL, "00010", "11101", "01011", "INSTRUCTION_R_SLL");
-        check_instruction(INSTRUCTION_R_SLT, SEL_SLT, "00011", "11100", "01100", "INSTRUCTION_R_SLT");
-        check_instruction(INSTRUCTION_R_SLTU, SEL_SLTU, "00100", "11011", "01101", "INSTRUCTION_R_SLTU");
-        check_instruction(INSTRUCTION_R_XOR, SEL_XOR, "00101", "11010", "01110", "INSTRUCTION_R_XOR");
-        check_instruction(INSTRUCTION_R_SRL, SEL_SRL, "00110", "11001", "01111", "INSTRUCTION_R_SRL");
-        check_instruction(INSTRUCTION_R_SRA, SEL_SRA, "00111", "11000", "10000", "INSTRUCTION_R_SRA");
-        check_instruction(INSTRUCTION_R_OR, SEL_OR, "01000", "10111", "10001", "INSTRUCTION_R_OR");
-        check_instruction(INSTRUCTION_R_AND, SEL_AND, "01001", "10110", "10010", "INSTRUCTION_R_AND");
+        check_instruction(INSTRUCTION_R_ADD,  SEL_ADD, 10, 00, 31, "INSTRUCTION_R_ADD");
+        check_instruction(INSTRUCTION_R_SUB,  SEL_SUB, 01, 30, 10, "INSTRUCTION_R_SUB");
+        check_instruction(INSTRUCTION_R_SLL,  SEL_SLL, 02, 29, 11, "INSTRUCTION_R_SLL");
+        check_instruction(INSTRUCTION_R_SLT,  SEL_SLT, 03, 28, 12, "INSTRUCTION_R_SLT");
+        check_instruction(INSTRUCTION_R_SLTU, SEL_SLTU, 04, 27, 13, "INSTRUCTION_R_SLTU");
+        check_instruction(INSTRUCTION_R_XOR,  SEL_XOR, 05, 26, 14, "INSTRUCTION_R_XOR");
+        check_instruction(INSTRUCTION_R_SRL,  SEL_SRL, 06, 25, 15, "INSTRUCTION_R_SRL");
+        check_instruction(INSTRUCTION_R_SRA,  SEL_SRA, 07, 24, 16, "INSTRUCTION_R_SRA");
+        check_instruction(INSTRUCTION_R_OR,   SEL_OR, 08, 23, 17, "INSTRUCTION_R_OR");
+        check_instruction(INSTRUCTION_R_AND,  SEL_AND, 09, 22, 18, "INSTRUCTION_R_AND");
         if success then
             report "testbench PC succesful!";
         else
