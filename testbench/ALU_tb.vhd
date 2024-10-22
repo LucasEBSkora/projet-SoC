@@ -76,8 +76,39 @@ begin
         check_result(X"00000018", X"00000045", SEL_SUB, X"FFFFFFD3");
         check_result(X"12345678", X"11111111", SEL_SUB, X"01234567");
         check_result(X"00010000", X"00000001", SEL_SUB, X"0000FFFF");
-        
 
+        check_result(X"00000000", X"00000000", SEL_XOR, X"00000000");
+        check_result(X"FFFFFFFF", X"FFFFFFFF", SEL_XOR, X"00000000");
+        check_result(X"FFFFFFFF", X"00000000", SEL_XOR, X"FFFFFFFF");
+        check_result(X"00000000", X"FFFFFFFF", SEL_XOR, X"FFFFFFFF");
+        check_result(X"00FF00FF", X"FF00FF00", SEL_XOR, X"FFFFFFFF");
+        check_result(X"0A0A0A0A", X"0000FFFF", SEL_XOR, X"0A0AF5F5");
+        check_result(X"00000045", X"00000018", SEL_XOR, X"0000005D");
+        check_result(X"12345678", X"11111111", SEL_XOR, X"03254769");
+        check_result(X"00000018", X"00000045", SEL_XOR, X"0000005D");
+        check_result(X"00010000", X"00000001", SEL_XOR, X"00010001");
+
+        check_result(X"00000000", X"00000000", SEL_OR, X"00000000");
+        check_result(X"00000000", X"00000001", SEL_OR, X"00000001");
+        check_result(X"00000001", X"00000001", SEL_OR, X"00000001");
+        check_result(X"FFFFFFFF", X"FFFFFFFF", SEL_OR, X"FFFFFFFF");
+        check_result(X"AABBAABB", X"00BB00BB", SEL_OR, X"AABBAABB");
+        check_result(X"00000001", X"FFFFFFFF", SEL_OR, X"FFFFFFFF");
+        check_result(X"00000045", X"00000018", SEL_OR, X"0000005D");
+        check_result(X"00000018", X"00000045", SEL_OR, X"0000005D");
+        check_result(X"12345678", X"11111111", SEL_OR, X"13355779");
+        check_result(X"00010000", X"00000001", SEL_OR, X"00010001");
+
+        check_result(X"00000000", X"00000000", SEL_AND, X"00000000");
+        check_result(X"00000000", X"00000001", SEL_AND, X"00000000");
+        check_result(X"00000001", X"00000001", SEL_AND, X"00000001");
+        check_result(X"FFFFFFFF", X"FFFFFFFF", SEL_AND, X"FFFFFFFF");
+        check_result(X"AABBAABB", X"00BB00BB", SEL_AND, X"00BB00BB");
+        check_result(X"00000001", X"FFFFFFFF", SEL_AND, X"00000001");
+        check_result(X"00000045", X"00000018", SEL_AND, X"00000000");
+        check_result(X"00000018", X"00000045", SEL_AND, X"00000000");
+        check_result(X"12345678", X"11111111", SEL_AND, X"10101010");
+        check_result(X"00010000", X"00000001", SEL_AND, X"00000000");
         if success then
             report "testbench PC succesful!";
         else
