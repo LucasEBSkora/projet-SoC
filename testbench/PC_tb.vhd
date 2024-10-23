@@ -69,6 +69,9 @@ begin
         wait for 10 ns;
 
         check(addr_out = 0, "PC did not reset! value is " & natural'image(addr_out));
+
+        wait for 1 ns;
+
         if success then
             report "testbench PC succesful!";
         else

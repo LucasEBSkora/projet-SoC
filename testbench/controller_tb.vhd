@@ -87,6 +87,9 @@ begin
         check_instruction(INSTRUCTION_R_SRA,  SEL_SRA, 07, 24, 16, "INSTRUCTION_R_SRA");
         check_instruction(INSTRUCTION_R_OR,   SEL_OR, 08, 23, 17, "INSTRUCTION_R_OR");
         check_instruction(INSTRUCTION_R_AND,  SEL_AND, 09, 22, 18, "INSTRUCTION_R_AND");
+
+        wait for 1 ns;
+        
         if success then
             report "testbench PC succesful!";
         else
