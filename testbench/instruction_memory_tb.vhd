@@ -8,7 +8,8 @@ architecture testbench of instruction_memory_tb is
     component instruction_memory
         generic (
             DATA_WIDTH : natural := 8;
-            ADDR_WIDTH : natural := 8
+            ADDR_WIDTH : natural := 8;
+            INIT_FILE : string := "programs/imem_testbench.txt"
         );
 
         port (
@@ -21,7 +22,7 @@ architecture testbench of instruction_memory_tb is
     signal success : boolean := true;
 begin
 
-    rom_1 : instruction_memory generic map(DATA_WIDTH => 8, ADDR_WIDTH => 8) port map(addr => addr_t, q => q_t);
+    rom_1 : instruction_memory generic map(DATA_WIDTH => 8, ADDR_WIDTH => 8, INIT_FILE => "programs/imem_testbench.txt") port map(addr => addr_t, q => q_t);
     process
         variable data : integer;
     begin
