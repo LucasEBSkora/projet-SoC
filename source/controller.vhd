@@ -1,12 +1,15 @@
 library IEEE;
+library WORK;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
+use WORK.constants.all;
 
 entity controller is
     port (
         instr : in std_logic_vector(31 downto 0);
         reg_we : out std_logic;
         pc_load : out std_logic;
+        ri_sel : out std_logic;
         alu_op : out unsigned(3 downto 0);
         reg_dest : out natural range 0 to 31;
         reg_s1 : out natural range 0 to 31;
@@ -30,4 +33,9 @@ begin
     reg_dest <= to_integer(unsigned(rd));
     reg_s1 <= to_integer(unsigned(rs1));
     reg_s2 <= to_integer(unsigned(rs2));
+
+    with opcode select ri_sel <=
+        '0' when OPCODE_R,
+        '1' when OPCODE_I,
+        '0' when others;
 end architecture rtl;

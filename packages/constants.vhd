@@ -16,5 +16,9 @@ package constants is
     constant SEL_OR : alu_op_sel := "0110";
     constant SEL_AND : alu_op_sel := "0111";    
     
+    subtype opcode is std_logic_vector(6 downto 0);
+    constant OPCODE_R : opcode := B"0110011";
+    constant OPCODE_I : opcode := B"0010011";
+    
     
 end package constants;
