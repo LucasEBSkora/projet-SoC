@@ -66,6 +66,7 @@ begin
         wait for 10 ns;
         check_value(data_out, zero);
 
+        wait for 1 ns;
         if success then
             report "testbench registerN succesful!";
         else

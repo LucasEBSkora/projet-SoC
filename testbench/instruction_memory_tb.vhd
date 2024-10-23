@@ -36,6 +36,8 @@ begin
             end if;
             assert addr_t = data report "unexpected value " & integer'image(data) & " at " & natural'image(addr_t) severity error;
         end loop;
+
+        wait for 1 ns;
         if success then
             report "testbench instruction_memory_tb succesful!";
         else

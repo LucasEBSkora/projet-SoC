@@ -164,6 +164,9 @@ begin
         check_result(X"00000018", X"00000045", SEL_AND, X"00000000");
         check_result(X"12345678", X"11111111", SEL_AND, X"10101010");
         check_result(X"00010000", X"00000001", SEL_AND, X"00000000");
+
+        wait for 1 ns;
+
         if success then
             report "testbench PC succesful!";
         else

@@ -113,6 +113,8 @@ begin
 
         end loop;
 
+        wait for 1 ns;
+
         if success then
             report "testbench register_bank succesful!";
         else
