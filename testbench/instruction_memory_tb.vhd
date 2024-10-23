@@ -9,6 +9,7 @@ architecture testbench of instruction_memory_tb is
         generic (
             DATA_WIDTH : natural := 8;
             ADDR_WIDTH : natural := 8;
+            MEMORY_DEPTH : natural := 2 ** ADDR_WIDTH;
             INIT_FILE : string := "programs/imem_testbench.txt"
         );
 

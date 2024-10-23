@@ -23,7 +23,8 @@ end entity;
 architecture rtl of register_bank is
     component registerN
         generic (
-            WORD_WIDTH : natural := 32
+            WORD_WIDTH : natural := 32;
+            INIT_VALUE : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0')
         );
         port (
             data_in : in std_logic_vector(WORD_WIDTH - 1 downto 0);
@@ -45,7 +46,7 @@ begin
     -- r1 to rMAX
     registers :
     for i in 1 to MAX_ADDR generate
-        regI : registerN generic map(WORD_WIDTH => WORD_WIDTH)
+        regI : registerN generic map(WORD_WIDTH => WORD_WIDTH, INIT_VALUE => std_logic_vector(to_unsigned(i, WORD_WIDTH)))
         port map(data_in => busW, data_out => data_outs(i), write_enable => write_enables(i), reset => reset, clk => clk);
 
         write_enables(i) <= write_enable when RW = i else

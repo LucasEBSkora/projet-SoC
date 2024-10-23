@@ -9,7 +9,8 @@ architecture rtl of registerN_tb is
     constant WORD_WIDTH : natural := 32;
     component registerN
         generic (
-            WORD_WIDTH : natural := 32
+            WORD_WIDTH : natural := 32;
+            INIT_VALUE : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0')
         );
         port (
             data_in : in std_logic_vector(WORD_WIDTH - 1 downto 0);

@@ -7,6 +7,7 @@ entity instruction_memory is
     generic (
         DATA_WIDTH : natural := 8;
         ADDR_WIDTH : natural := 8;
+        MEMORY_DEPTH : natural := 2 ** ADDR_WIDTH;
         INIT_FILE : string := "programs/imem_testbench.txt"
     );
 
@@ -17,10 +18,10 @@ entity instruction_memory is
 end entity;
 
 architecture rtl of instruction_memory is
-    constant MAX_ADDR : natural := 2 ** ADDR_WIDTH - 1;
-
+    
     subtype word_t is std_logic_vector((DATA_WIDTH - 1) downto 0);
-    type memory_t is array(MAX_ADDR downto 0) of word_t;
+    type memory_t is array (0 to MEMORY_DEPTH - 1) of word_t;
+    -- type memory_t is array(MAX_ADDR downto 0) of word_t;
 
     -- function converting hexadecimal string to std_logic_vector
     function str_to_slv(str : string) return std_logic_vector is
@@ -53,8 +54,7 @@ architecture rtl of instruction_memory is
         variable instr_init : std_logic_vector(DATA_WIDTH - 1 downto 0);
     begin
         file_open(filePtr, fileName, READ_MODE);
-        while (not endfile(filePtr)) loop
-            --while (not endfile(filePtr)) loop
+        while (inst_num < MEMORY_DEPTH and not endfile(filePtr)) loop
             readline (filePtr, line_instr);
             read (line_instr, instr_str);
             instr_init := str_to_slv(instr_str);
