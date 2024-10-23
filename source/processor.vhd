@@ -109,7 +109,7 @@ architecture rtl of processor is
 begin
     -- pc_inst : PC generic map(ADDR_WIDTH => ADDR_WIDTH) port map(load => load, clk => clk, addr_in => to_integer(unsigned(result)), reset => reset, addr_out => addr_instr);
     pc_inst : PC generic map(ADDR_WIDTH => ADDR_WIDTH) port map(load => load, clk => clk, addr_in => 0, reset => reset, addr_out => addr_instr);
-    rom : instruction_memory generic map(DATA_WIDTH => DATA_WIDTH, ADDR_WIDTH => ADDR_WIDTH, MEMORY_DEPTH => 100, INIT_FILE => PROGRAM_FILE) port map(addr => addr_instr/4, q => instruction);
+    rom : instruction_memory generic map(DATA_WIDTH => DATA_WIDTH, ADDR_WIDTH => ADDR_WIDTH, MEMORY_DEPTH => 2000, INIT_FILE => PROGRAM_FILE) port map(addr => addr_instr/4, q => instruction);
 
     alu_inst : ALU generic map(WORD_WIDTH => DATA_WIDTH) port map(opA => BusA, opB => BusB, res => result, aluOp => alu_op);
 

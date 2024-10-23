@@ -7,7 +7,7 @@ entity R_instruction_test_tb is end entity R_instruction_test_tb;
 architecture rtl of R_instruction_test_tb is
     component processor
         generic (
-            ADDR_WIDTH : natural := 8;
+            ADDR_WIDTH : natural := 16;
             DATA_WIDTH : natural := 32;
             REG_ADDR_WIDTH : natural := 5;
             PROGRAM_FILE : string
@@ -22,6 +22,6 @@ architecture rtl of R_instruction_test_tb is
 begin
 
     clk <= not clk after 5 ns;
-    proc : processor generic map(PROGRAM_FILE => "programs/or_02.hex") port map(clk => clk, reset => '0');
+    proc : processor generic map(PROGRAM_FILE => "programs/and_02.hex") port map(clk => clk, reset => '0');
 
 end architecture rtl;
