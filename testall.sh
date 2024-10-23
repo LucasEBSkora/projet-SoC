@@ -1,7 +1,10 @@
 #!/bin/bash
 for fullfile in testbench/*; do
     filename=$(basename -- "$fullfile")
-    filename="${filename%_tb.vhd}"
-    echo $filename
-    make TESTBENCH=$filename test
+    case $filename in *_tb.vhd)\
+        filename="${filename%_tb.vhd}";\
+        echo $filename;\
+        make TESTBENCH=$filename test;; \
+    esac
+    
 done

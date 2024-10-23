@@ -2,9 +2,9 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
-entity R_instruction_ADD_tb is end entity R_instruction_ADD_tb;
+entity R_instruction_test_tb is end entity R_instruction_test_tb;
 
-architecture rtl of R_instruction_ADD_tb is
+architecture rtl of R_instruction_test_tb is
     component processor
         generic (
             ADDR_WIDTH : natural := 8;
@@ -22,6 +22,6 @@ architecture rtl of R_instruction_ADD_tb is
 begin
 
     clk <= not clk after 5 ns;
-    proc : processor generic map(PROGRAM_FILE => "programs/add_02.hex") port map(clk => clk, reset => '0');
+    proc : processor generic map(PROGRAM_FILE => "programs/or_02.hex") port map(clk => clk, reset => '0');
 
 end architecture rtl;
