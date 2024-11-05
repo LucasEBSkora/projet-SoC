@@ -75,13 +75,13 @@ begin
         constant INSTRUCTION_R_AND : instruction := B"0000000_10010_10110_111_01001_0110011";
 
         constant INSTRUCTION_I_ADD : instruction := B"000000011111_00000_000_01010_0010011";
-        constant INSTRUCTION_I_SLL : instruction := B"0000000_01011_11101_001_00010_0010011";
-        constant INSTRUCTION_I_SLT : instruction := B"000000001100_11100_010_00011_0010011";
+        constant INSTRUCTION_I_SLL : instruction := B"0100000_01011_11101_001_00010_0010011";
+        constant INSTRUCTION_I_SLT : instruction := B"010000001100_11100_010_00011_0010011";
         constant INSTRUCTION_I_SLTU : instruction := B"000000001101_11011_011_00100_0010011";
-        constant INSTRUCTION_I_XOR : instruction := B"000000001110_11010_100_00101_0010011";
+        constant INSTRUCTION_I_XOR : instruction := B"010000001110_11010_100_00101_0010011";
         constant INSTRUCTION_I_SRL : instruction := B"0000000_01111_11001_101_00110_0010011";
         constant INSTRUCTION_I_SRA : instruction := B"0100000_10000_11000_101_00111_0010011";
-        constant INSTRUCTION_I_OR : instruction := B"000000010001_10111_110_01000_0010011";
+        constant INSTRUCTION_I_OR : instruction := B"010000010001_10111_110_01000_0010011";
         constant INSTRUCTION_I_AND : instruction := B"000000010010_10110_111_01001_0010011";
     begin
 

@@ -28,7 +28,10 @@ begin
     reg_we <= '1';
     pc_load <= '0';
 
-    alu_op <= unsigned(funct7(5) & funct3);
+    --  for I type instructions, we can't calculate the operation as simply because for operations other than
+    --  srli and srai, funct7(5) is just a part of the immediate, not a way of choosing the operator.
+    alu_op <= unsigned(funct7(5) & funct3) when opcode = OPCODE_R or (opcode = OPCODE_I and funct3 = "101") else
+        unsigned('0' & funct3);
 
     reg_dest <= to_integer(unsigned(rd));
     reg_s1 <= to_integer(unsigned(rs1));
