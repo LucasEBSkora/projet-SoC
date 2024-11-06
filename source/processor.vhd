@@ -158,7 +158,7 @@ begin
 
     ram : data_memory generic map(data_width => DATA_WIDTH, ADDR_WIDTH => RAM_ADDR_WIDTH)
     port map(
-        clk => clk, addr => to_integer(unsigned(result(RAM_ADDR_WIDTH - 1 downto 0))),
+        clk => clk, addr => to_integer(unsigned(result(RAM_ADDR_WIDTH + 1 downto 2))),
         data => (others => '0'), we => data_mem_write_enable, q => ram_data);
 
     alu_inst : ALU generic map(WORD_WIDTH => DATA_WIDTH) port map(opA => BusA, opB => operandB, res => result, aluOp => alu_op);
