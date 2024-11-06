@@ -124,22 +124,34 @@ architecture rtl of processor is
             qo : out std_logic_vector(WORD_WIDTH - 1 downto 0)
         );
     end component mux2;
+
+    component LM
+        port (
+            data : in std_logic_vector(31 downto 0);
+            position : in std_logic_vector(1 downto 0);
+            funct : in load_sel;
+            result : out std_logic_vector(31 downto 0)
+        );
+    end component LM;
+
+    subtype data_word is std_logic_vector(DATA_WIDTH - 1 downto 0);
+
     signal load : std_logic;
 
     constant REG_MAX_ADDR : natural := 2 ** REG_ADDR_WIDTH - 1;
     signal RW : natural range 0 to REG_MAX_ADDR;
     signal RA : natural range 0 to REG_MAX_ADDR;
     signal RB : natural range 0 to REG_MAX_ADDR;
-    signal BusA : std_logic_vector(DATA_WIDTH - 1 downto 0);
-    signal BusB : std_logic_vector(DATA_WIDTH - 1 downto 0);
-    signal BusW : std_logic_vector(DATA_WIDTH - 1 downto 0);
+    signal BusA : data_word;
+    signal BusB : data_word;
+    signal BusW : data_word;
 
-    signal result : std_logic_vector(DATA_WIDTH - 1 downto 0);
-    signal ram_data : std_logic_vector(DATA_WIDTH - 1 downto 0);
+    signal result : data_word;
+    signal ram_data : data_word;
 
     signal pc_out : natural range 0 to 2 ** ADDR_WIDTH - 1;
     signal addr_instr : natural range 0 to 2 ** ADDR_WIDTH - 1;
-    signal instruction : std_logic_vector(DATA_WIDTH - 1 downto 0);
+    signal instruction : data_word;
 
     signal register_write_enable : std_logic;
     signal data_mem_write_enable : std_logic;
@@ -147,9 +159,13 @@ architecture rtl of processor is
     signal busw_sel : std_logic;
     signal alu_op : alu_op_sel;
 
-    signal immediate : std_logic_vector(DATA_WIDTH - 1 downto 0);
+    signal immediate : data_word;
 
-    signal operandB : std_logic_vector(DATA_WIDTH - 1 downto 0);
+    signal operandB : data_word;
+
+    alias funct3 : std_logic_vector(2 downto 0) is instruction(14 downto 12);
+
+    signal ram_out : data_word;
 
 begin
     pc_inst : PC generic map(ADDR_WIDTH => ADDR_WIDTH) port map(load => load, clk => clk, addr_in => to_integer(unsigned(result(ADDR_WIDTH - 1 downto 0))), reset => reset, addr_out => addr_instr);
@@ -174,5 +190,7 @@ begin
 
     muxSelOpB : mux2 generic map(WORD_WIDTH => DATA_WIDTH) port map(sel => ri_sel, in1 => BusB, in2 => immediate, qo => operandB);
 
-    muxSelBusW : mux2 generic map(WORD_WIDTH => DATA_WIDTH) port map(sel => busw_sel, in1 => result, in2 => ram_data, qo => BusW);
+    muxSelBusW : mux2 generic map(WORD_WIDTH => DATA_WIDTH) port map(sel => busw_sel, in1 => result, in2 => ram_out, qo => BusW);
+
+    lm_inst : LM port map(data => ram_data, position => result(1 downto 0), funct => funct3, result => ram_out);
 end architecture rtl;
