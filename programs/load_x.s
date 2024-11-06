@@ -1,0 +1,11 @@
+addi x5,x0,0
+addi x7,x0,8
+lw   x1,1(x5)
+lw   x2,2(x5)
+lw   x3,3(x5)
+lw   x4,4(x5)
+lw   x1,10(x7)
+lw   x2,11(x7)
+lw   x3,12(x7)
+lw   x4,13(x7)
+lw   x5,14(x7)
