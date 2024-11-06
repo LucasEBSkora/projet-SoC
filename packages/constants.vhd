@@ -19,4 +19,5 @@ package constants is
     subtype opcode is std_logic_vector(6 downto 0);
     constant OPCODE_R : opcode := B"0110011";
     constant OPCODE_I : opcode := B"0010011";
+    constant OPCODE_LOAD : opcode := B"0000011";
 end package constants;

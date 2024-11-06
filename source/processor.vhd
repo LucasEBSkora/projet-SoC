@@ -7,9 +7,10 @@ use WORK.constants.all;
 entity processor is
     generic (
         ADDR_WIDTH : natural := 32;
+        RAM_ADDR_WIDTH : natural := 8;
         DATA_WIDTH : natural := 32;
         REG_ADDR_WIDTH : natural := 5;
-        PROGRAM_FILE: string
+        PROGRAM_FILE : string
     );
     port (
         clk : in std_logic;
@@ -41,6 +42,20 @@ architecture rtl of processor is
 
         port (
             addr : in natural range 0 to 2 ** ADDR_WIDTH - 1;
+            q : out std_logic_vector((DATA_WIDTH - 1) downto 0)
+        );
+    end component;
+
+    component data_memory
+        generic (
+            DATA_WIDTH : natural := data_width;
+            ADDR_WIDTH : natural := addr_width
+        );
+        port (
+            clk : in std_logic;
+            addr : in natural range 0 to 2 ** ADDR_WIDTH - 1;
+            data : in std_logic_vector((DATA_WIDTH - 1) downto 0);
+            we : in std_logic := '1';
             q : out std_logic_vector((DATA_WIDTH - 1) downto 0)
         );
     end component;
@@ -79,8 +94,10 @@ architecture rtl of processor is
         port (
             instr : in std_logic_vector(31 downto 0);
             reg_we : out std_logic;
+            ram_we : out std_logic;
             pc_load : out std_logic;
             ri_sel : out std_logic;
+            busw_sel : out std_logic;
             alu_op : out unsigned(3 downto 0);
             reg_dest : out natural range 0 to 31;
             reg_s1 : out natural range 0 to 31;
@@ -107,8 +124,6 @@ architecture rtl of processor is
             qo : out std_logic_vector(WORD_WIDTH - 1 downto 0)
         );
     end component mux2;
-
-
     signal load : std_logic;
 
     constant REG_MAX_ADDR : natural := 2 ** REG_ADDR_WIDTH - 1;
@@ -117,15 +132,19 @@ architecture rtl of processor is
     signal RB : natural range 0 to REG_MAX_ADDR;
     signal BusA : std_logic_vector(DATA_WIDTH - 1 downto 0);
     signal BusB : std_logic_vector(DATA_WIDTH - 1 downto 0);
+    signal BusW : std_logic_vector(DATA_WIDTH - 1 downto 0);
 
     signal result : std_logic_vector(DATA_WIDTH - 1 downto 0);
+    signal ram_data : std_logic_vector(DATA_WIDTH - 1 downto 0);
 
     signal pc_out : natural range 0 to 2 ** ADDR_WIDTH - 1;
     signal addr_instr : natural range 0 to 2 ** ADDR_WIDTH - 1;
     signal instruction : std_logic_vector(DATA_WIDTH - 1 downto 0);
 
     signal register_write_enable : std_logic;
+    signal data_mem_write_enable : std_logic;
     signal ri_sel : std_logic;
+    signal busw_sel : std_logic;
     signal alu_op : alu_op_sel;
 
     signal immediate : std_logic_vector(DATA_WIDTH - 1 downto 0);
@@ -134,17 +153,26 @@ architecture rtl of processor is
 
 begin
     pc_inst : PC generic map(ADDR_WIDTH => ADDR_WIDTH) port map(load => load, clk => clk, addr_in => to_integer(unsigned(result(ADDR_WIDTH - 1 downto 0))), reset => reset, addr_out => addr_instr);
-    
+
     rom : instruction_memory generic map(DATA_WIDTH => DATA_WIDTH, ADDR_WIDTH => ADDR_WIDTH, MEMORY_DEPTH => 2000, INIT_FILE => PROGRAM_FILE) port map(addr => addr_instr/4, q => instruction);
+
+    ram : data_memory generic map(data_width => DATA_WIDTH, ADDR_WIDTH => RAM_ADDR_WIDTH)
+    port map(
+        clk => clk, addr => to_integer(unsigned(result(RAM_ADDR_WIDTH - 1 downto 0))),
+        data => (others => '0'), we => data_mem_write_enable, q => ram_data);
 
     alu_inst : ALU generic map(WORD_WIDTH => DATA_WIDTH) port map(opA => BusA, opB => operandB, res => result, aluOp => alu_op);
 
-    controller_inst : controller port map(instr => instruction, reg_we => register_write_enable, pc_load => load, ri_sel => ri_sel, alu_op => alu_op, reg_dest => RW, reg_s1 => RA, reg_s2 => RB);
+    controller_inst : controller port map(
+        instr => instruction, reg_we => register_write_enable, ram_we => data_mem_write_enable,
+        pc_load => load, ri_sel => ri_sel, busw_sel => busw_sel, alu_op => alu_op, reg_dest => RW, reg_s1 => RA, reg_s2 => RB);
 
     bank : register_bank generic map(WORD_WIDTH => DATA_WIDTH, ADDR_WIDTH => REG_ADDR_WIDTH)
-    port map(clk => clk, write_enable => register_write_enable, reset => reset, RW => RW, RA => RA, RB => RB, busW => result, busA => BusA, busB => BusB);
+    port map(clk => clk, write_enable => register_write_enable, reset => reset, RW => RW, RA => RA, RB => RB, busW => BusW, busA => BusA, busB => BusB);
 
-    immExt : Imm_ext port map (instr => instruction, instType => 0, immExt => immediate);
+    immExt : Imm_ext port map(instr => instruction, instType => 0, immExt => immediate);
 
-    muxSelBusB : mux2 generic map (WORD_WIDTH => DATA_WIDTH) port map(sel => ri_sel, in1 => BusB, in2 => immediate, qo => operandB);
+    muxSelOpB : mux2 generic map(WORD_WIDTH => DATA_WIDTH) port map(sel => ri_sel, in1 => BusB, in2 => immediate, qo => operandB);
+
+    muxSelBusW : mux2 generic map(WORD_WIDTH => DATA_WIDTH) port map(sel => busw_sel, in1 => result, in2 => ram_data, qo => BusW);
 end architecture rtl;

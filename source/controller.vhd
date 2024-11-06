@@ -8,8 +8,10 @@ entity controller is
     port (
         instr : in std_logic_vector(31 downto 0);
         reg_we : out std_logic;
+        ram_we : out std_logic;
         pc_load : out std_logic;
         ri_sel : out std_logic;
+        busw_sel : out std_logic;
         alu_op : out unsigned(3 downto 0);
         reg_dest : out natural range 0 to 31;
         reg_s1 : out natural range 0 to 31;
@@ -28,10 +30,16 @@ begin
     reg_we <= '1';
     pc_load <= '0';
 
+    ram_we <= '0';
+    busw_sel <= '1' when opcode = OPCODE_LOAD else
+        '0';
+
     --  for I type instructions, we can't calculate the operation as simply because for operations other than
     --  srli and srai, funct7(5) is just a part of the immediate, not a way of choosing the operator.
     alu_op <= unsigned(funct7(5) & funct3) when opcode = OPCODE_R or (opcode = OPCODE_I and funct3 = "101") else
-        unsigned('0' & funct3);
+        unsigned('0' & funct3) when opcode = OPCODE_I else
+        SEL_ADD when opcode = OPCODE_LOAD else
+        (others => '0');
 
     reg_dest <= to_integer(unsigned(rd));
     reg_s1 <= to_integer(unsigned(rs1));
@@ -40,5 +48,6 @@ begin
     with opcode select ri_sel <=
         '0' when OPCODE_R,
         '1' when OPCODE_I,
+        '1' when OPCODE_LOAD,
         '0' when others;
 end architecture rtl;
