@@ -55,13 +55,13 @@ begin
     begin
         -- LB choose byte
         check_result(X"FFFFFFFF", X"01020304", "00", SEL_LSB, X"FFFFFF04");
-        check_result(X"ABABABAB", X"01020304", "01", SEL_LSB, X"ABAB03AB");
-        check_result(X"00000000", X"01020304", "10", SEL_LSB, X"00020000");
-        check_result(X"11111111", X"01020304", "11", SEL_LSB, X"01111111");
+        check_result(X"ABABABAB", X"04010203", "01", SEL_LSB, X"ABAB03AB");
+        check_result(X"00000000", X"03040102", "10", SEL_LSB, X"00020000");
+        check_result(X"11111111", X"04030201", "11", SEL_LSB, X"01111111");
 
         -- LH choose byte
-        check_result(X"00000000", X"22221111", "00", SEL_LSH, X"00001111");
-        check_result(X"00000000", X"22221111", "10", SEL_LSH, X"22220000");
+        check_result(X"11112222", X"00000000", "00", SEL_LSH, X"11110000");
+        check_result(X"11112222", X"00000000", "10", SEL_LSH, X"00002222");
 
         -- LW
         check_result(X"00010203", X"12345678", "00", SEL_LSW, X"12345678");
