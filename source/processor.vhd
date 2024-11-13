@@ -108,7 +108,7 @@ architecture rtl of processor is
     component Imm_ext
         port (
             instr : in std_logic_vector(31 downto 0);
-            instType : in natural;
+            instType : in opcode;
             immExt : out std_logic_vector(31 downto 0)
         );
     end component Imm_ext;
@@ -164,7 +164,7 @@ architecture rtl of processor is
     signal operandB : data_word;
 
     alias funct3 : std_logic_vector(2 downto 0) is instruction(14 downto 12);
-
+    alias opcode : std_logic_vector(6 downto 0) is instruction(6 downto 0);
     signal ram_out : data_word;
 
 begin
@@ -186,7 +186,7 @@ begin
     bank : register_bank generic map(WORD_WIDTH => DATA_WIDTH, ADDR_WIDTH => REG_ADDR_WIDTH)
     port map(clk => clk, write_enable => register_write_enable, reset => reset, RW => RW, RA => RA, RB => RB, busW => BusW, busA => BusA, busB => BusB);
 
-    immExt : Imm_ext port map(instr => instruction, instType => 0, immExt => immediate);
+    immExt : Imm_ext port map(instr => instruction, instType => opcode, immExt => immediate);
 
     muxSelOpB : mux2 generic map(WORD_WIDTH => DATA_WIDTH) port map(sel => ri_sel, in1 => BusB, in2 => immediate, qo => operandB);
 
