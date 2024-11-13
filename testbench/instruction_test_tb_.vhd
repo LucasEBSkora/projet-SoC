@@ -22,6 +22,6 @@ architecture rtl of instruction_test_tb is
 begin
 
     clk <= not clk after 5 ns;
-    proc : processor generic map(PROGRAM_FILE => "programs/load_x.hex") port map(clk => clk, reset => '0');
+    proc : processor generic map(PROGRAM_FILE => "programs/load_03.hex") port map(clk => clk, reset => '0');
 
 end architecture rtl;
