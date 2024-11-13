@@ -30,8 +30,8 @@ architecture rtl of data_memory is
             tmp(addr_pos) := std_logic_vector(to_unsigned(addr_pos, DATA_WIDTH));
         end loop;
         -- to test lh, lb, lbu and lhu
-        tmp(0) := X"01020304";
-        tmp(2) := X"FF800010";
+        -- tmp(0) := X"01020304";
+        -- tmp(2) := X"FF800010";
         return tmp;
     end init_ram;
 

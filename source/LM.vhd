@@ -31,11 +31,11 @@ begin
         (others => '0') when others;
 
     with funct select result <=
-        (31 downto 8 => selected_byte(7)) & selected_byte when SEL_LB,
-        (31 downto 16 => selected_half(15)) & selected_half when SEL_LH,
-        data when SEL_LW,
-        (31 downto 8 => '0') & selected_byte when SEL_LBU,
-        (31 downto 16 => '0') & selected_half when SEL_LHU,
+        (31 downto 8 => selected_byte(7)) & selected_byte when SEL_LSB,
+        (31 downto 16 => selected_half(15)) & selected_half when SEL_LSH,
+        data when SEL_LSW,
+        (31 downto 8 => '0') & selected_byte when SEL_LSBU,
+        (31 downto 16 => '0') & selected_half when SEL_LSHU,
         data when others;
 
 end architecture rtl;

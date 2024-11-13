@@ -20,6 +20,7 @@ architecture rtl of LM_tb is
     signal position : std_logic_vector(1 downto 0);
     signal funct : load_sel;
     signal result : std_logic_vector(31 downto 0);
+
     signal success : boolean := true;
 begin
 
@@ -47,36 +48,36 @@ begin
         end procedure;
     begin
         -- LB choose byte
-        check_result(X"01020304", "00", SEL_LB, X"00000004");
-        check_result(X"01020304", "01", SEL_LB, X"00000003");
-        check_result(X"01020304", "10", SEL_LB, X"00000002");
-        check_result(X"01020304", "11", SEL_LB, X"00000001");
+        check_result(X"01020304", "00", SEL_LSB, X"00000004");
+        check_result(X"01020304", "01", SEL_LSB, X"00000003");
+        check_result(X"01020304", "10", SEL_LSB, X"00000002");
+        check_result(X"01020304", "11", SEL_LSB, X"00000001");
 
         -- LB sign extention
-        check_result(X"FE00007E", "00", SEL_LB, X"0000007E");
-        check_result(X"FE00007E", "11", SEL_LB, X"FFFFFFFE");
+        check_result(X"FE00007E", "00", SEL_LSB, X"0000007E");
+        check_result(X"FE00007E", "11", SEL_LSB, X"FFFFFFFE");
 
         -- LH choose byte
-        check_result(X"22221111", "00", SEL_LH, X"00001111");
-        check_result(X"22221111", "10", SEL_LH, X"00002222");
+        check_result(X"22221111", "00", SEL_LSH, X"00001111");
+        check_result(X"22221111", "10", SEL_LSH, X"00002222");
 
         -- LH sign extention
-        check_result(X"FFFE7FFE", "00", SEL_LH, X"00007FFE");
-        check_result(X"FFFE7FFE", "10", SEL_LH, X"FFFFFFFE");
+        check_result(X"FFFE7FFE", "00", SEL_LSH, X"00007FFE");
+        check_result(X"FFFE7FFE", "10", SEL_LSH, X"FFFFFFFE");
 
         -- LW
-        check_result(X"12345678", "00", SEL_LW, X"12345678");
-        check_result(X"FFDDEEBB", "00", SEL_LW, X"FFDDEEBB");
+        check_result(X"12345678", "00", SEL_LSW, X"12345678");
+        check_result(X"FFDDEEBB", "00", SEL_LSW, X"FFDDEEBB");
 
         -- LBU choose and no sign extention
-        check_result(X"FE02037E", "00", SEL_LBU, X"0000007E");
-        check_result(X"FE02037E", "01", SEL_LBU, X"00000003");
-        check_result(X"FE02037E", "10", SEL_LBU, X"00000002");
-        check_result(X"FE02037E", "11", SEL_LBU, X"000000FE");
+        check_result(X"FE02037E", "00", SEL_LSBU, X"0000007E");
+        check_result(X"FE02037E", "01", SEL_LSBU, X"00000003");
+        check_result(X"FE02037E", "10", SEL_LSBU, X"00000002");
+        check_result(X"FE02037E", "11", SEL_LSBU, X"000000FE");
 
         -- LH choose and no sign extention
-        check_result(X"FFFE7FFE", "00", SEL_LHU, X"00007FFE");
-        check_result(X"FFFE7FFE", "10", SEL_LHU, X"0000FFFE");
+        check_result(X"FFFE7FFE", "00", SEL_LSHU, X"00007FFE");
+        check_result(X"FFFE7FFE", "10", SEL_LSHU, X"0000FFFE");
 
         wait for 1 ns;
 
