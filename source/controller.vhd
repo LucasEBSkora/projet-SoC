@@ -27,10 +27,18 @@ architecture rtl of controller is
     alias rs2 : std_logic_vector(4 downto 0) is instr(24 downto 20);
     alias funct7 : std_logic_vector(6 downto 0) is instr(31 downto 25);
 begin
-    reg_we <= '1';
+
+    with opcode select reg_we <=
+    '1' when OPCODE_R,
+    '1' when OPCODE_I,
+    '1' when OPCODE_LOAD,
+    '0' WHEN OPCODE_S,
+    '0' when others;
+
     pc_load <= '0';
 
-    ram_we <= '0';
+    ram_we <= '1' when opcode = OPCODE_S else
+        '0';
     busw_sel <= '1' when opcode = OPCODE_LOAD else
         '0';
 
@@ -49,5 +57,6 @@ begin
         '0' when OPCODE_R,
         '1' when OPCODE_I,
         '1' when OPCODE_LOAD,
+        '1' WHEN OPCODE_S,
         '0' when others;
 end architecture rtl;
