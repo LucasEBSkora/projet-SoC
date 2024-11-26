@@ -134,6 +134,15 @@ architecture rtl of processor is
         );
     end component LM;
 
+    component SM
+        port (
+            current_data : in std_logic_vector(31 downto 0);
+            new_data : in std_logic_vector(31 downto 0);
+            position : in std_logic_vector(1 downto 0);
+            funct : in load_sel;
+            result : out std_logic_vector(31 downto 0)
+        );
+    end component SM;
     subtype data_word is std_logic_vector(DATA_WIDTH - 1 downto 0);
 
     signal load : std_logic;
@@ -167,6 +176,8 @@ architecture rtl of processor is
     alias opcode : std_logic_vector(6 downto 0) is instruction(6 downto 0);
     signal ram_out : data_word;
 
+    signal ram_in : data_word;
+
 begin
     pc_inst : PC generic map(ADDR_WIDTH => ADDR_WIDTH) port map(load => load, clk => clk, addr_in => to_integer(unsigned(result(ADDR_WIDTH - 1 downto 0))), reset => reset, addr_out => addr_instr);
 
@@ -175,7 +186,7 @@ begin
     ram : data_memory generic map(data_width => DATA_WIDTH, ADDR_WIDTH => RAM_ADDR_WIDTH)
     port map(
         clk => clk, addr => to_integer(unsigned(result(RAM_ADDR_WIDTH + 1 downto 2))),
-        data => (others => '0'), we => data_mem_write_enable, q => ram_data);
+        data => ram_in, we => data_mem_write_enable, q => ram_data);
 
     alu_inst : ALU generic map(WORD_WIDTH => DATA_WIDTH) port map(opA => BusA, opB => operandB, res => result, aluOp => alu_op);
 
@@ -193,4 +204,6 @@ begin
     muxSelBusW : mux2 generic map(WORD_WIDTH => DATA_WIDTH) port map(sel => busw_sel, in1 => result, in2 => ram_out, qo => BusW);
 
     lm_inst : LM port map(data => ram_data, position => result(1 downto 0), funct => funct3, result => ram_out);
+
+    sm_inst : SM port map(current_data => ram_data, new_data => BusB, position => result(1 downto 0), funct => funct3, result => ram_in);
 end architecture rtl;
