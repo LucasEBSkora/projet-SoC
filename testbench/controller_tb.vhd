@@ -15,8 +15,9 @@ architecture rtl of controller_tb is
     component controller
         port (
             instr : in std_logic_vector(31 downto 0);
+            store_position : in std_logic_vector(1 downto 0);
             reg_we : out std_logic;
-            ram_we : out std_logic;
+            ram_we : out std_logic_vector(3 downto 0);
             pc_load : out std_logic;
             ri_sel : out std_logic;
             busw_sel : out std_logic;
@@ -28,8 +29,9 @@ architecture rtl of controller_tb is
     end component controller;
 
     signal instr : instruction := (others => '0');
+    signal store_position : std_logic_vector(1 downto 0);
     signal reg_we : std_logic;
-    signal ram_we : std_logic;
+    signal ram_we : std_logic_vector(3 downto 0);
     signal pc_load : std_logic;
     signal ri_sel : std_logic;
     signal busw_sel : std_logic;
@@ -42,7 +44,9 @@ architecture rtl of controller_tb is
 begin
 
     uut : controller port map(
-        instr => instr, reg_we => reg_we, ram_we => ram_we, pc_load => pc_load, ri_sel => ri_sel, busw_sel => busw_sel, alu_op => alu_op,
+        instr => instr, store_position => store_position,
+        reg_we => reg_we, ram_we => ram_we, pc_load => pc_load, ri_sel => ri_sel, busw_sel => busw_sel,
+        alu_op => alu_op,
         reg_dest => reg_dest, reg_s1 => reg_s1, reg_s2 => reg_s2
     );
 
@@ -68,7 +72,7 @@ begin
             check('0' = pc_load, "PC load should be 0, is " & std_logic'image(reg_we) & " for instruction " & instruction_name);
             check('0' = ri_sel, "RI select should be 0, is " & std_logic'image(ri_sel) & " for instruction " & instruction_name);
             check('0' = busw_sel, "Bus W select should be 0, is " & std_logic'image(busw_sel) & " for instruction " & instruction_name);
-            check('0' = ram_we, "RAM write enable should be 0, is " & std_logic'image(ram_we) & " for instruction " & instruction_name);
+            check("0000" = ram_we, "RAM write enable should be 0000, is " & to_hstring(ram_we) & " for instruction " & instruction_name);
         end procedure;
 
         procedure check_instruction_i(new_instruction : instruction; expected_op : alu_op_sel; rd : register_addr; rs1 : register_addr; instruction_name : string) is begin
@@ -83,7 +87,7 @@ begin
             check('0' = pc_load, "PC load should be 0, is " & std_logic'image(reg_we) & " for instruction " & instruction_name);
             check('1' = ri_sel, "RI select should be 1, is " & std_logic'image(ri_sel) & " for instruction " & instruction_name);
             check('0' = busw_sel, "Bus W select should be 0, is " & std_logic'image(busw_sel) & " for instruction " & instruction_name);
-            check('0' = ram_we, "RAM write enable should be 0, is " & std_logic'image(ram_we) & " for instruction " & instruction_name);
+            check("0000" = ram_we, "RAM write enable should be 0000, is " & to_hstring(ram_we) & " for instruction " & instruction_name);
         end procedure;
 
         procedure check_instruction_load(new_instruction : instruction; rd : register_addr; rs1 : register_addr; instruction_name : string) is begin
@@ -97,11 +101,12 @@ begin
             check('0' = pc_load, "PC load should be 0, is " & std_logic'image(reg_we) & " for instruction " & instruction_name);
             check('1' = ri_sel, "RI select should be 1, is " & std_logic'image(ri_sel) & " for instruction " & instruction_name);
             check('1' = busw_sel, "Bus W select should be 1, is " & std_logic'image(busw_sel) & " for instruction " & instruction_name);
-            check('0' = ram_we, "RAM write enable should be 0, is " & std_logic'image(ram_we) & " for instruction " & instruction_name);
+            check("0000" = ram_we, "RAM write enable should be 0000, is " & to_hstring(ram_we) & " for instruction " & instruction_name);
         end procedure;
 
-        procedure check_instruction_S(new_instruction : instruction; rs1 : register_addr; rs2 : register_addr; instruction_name : string) is begin
+        procedure check_instruction_S(new_instruction : instruction; new_position : std_logic_vector(1 downto 0); rs1 : register_addr; rs2 : register_addr; expected_ram_we : std_logic_vector(3 downto 0); instruction_name : string) is begin
             instr <= new_instruction;
+            store_position <= new_position;
 
             wait for 1 ns;
             check(alu_op = SEL_ADD, "ALU OP should be 0000, is " & integer'image(to_integer(unsigned(alu_op))) & " for instruction " & instruction_name);
@@ -110,7 +115,7 @@ begin
             check('0' = reg_we, "register write enable should be 0, is " & std_logic'image(reg_we) & " for instruction " & instruction_name);
             check('0' = pc_load, "PC load should be 0, is " & std_logic'image(reg_we) & " for instruction " & instruction_name);
             check('1' = ri_sel, "RI select should be 1, is " & std_logic'image(ri_sel) & " for instruction " & instruction_name);
-            check('1' = ram_we, "RAM write enable should be 1, is " & std_logic'image(ram_we) & " for instruction " & instruction_name);
+            check(expected_ram_we = ram_we, "RAM write enable should be " & to_hstring(expected_ram_we) & ", is " & to_hstring(ram_we) & " for instruction " & instruction_name);
         end procedure;
 
         constant INSTRUCTION_R_ADD : instruction := B"0000000_11111_00000_000_01010_0110011";
@@ -194,17 +199,17 @@ begin
         check_instruction_load(INSTRUCTION_LOAD_9, 09, 22, "INSTRUCTION_LOAD_9");
         check_instruction_load(INSTRUCTION_LOAD_10, 10, 00, "INSTRUCTION_LOAD_10");
 
-        --                  instruction        rs1 rs2 name
-        check_instruction_s(INSTRUCTION_S_B_1, 00, 31, "INSTRUCTION_S_B_1");
-        check_instruction_s(INSTRUCTION_S_B_2, 30, 10, "INSTRUCTION_S_B_2");
-        check_instruction_s(INSTRUCTION_S_B_3, 29, 11, "INSTRUCTION_S_B_3");
-        check_instruction_s(INSTRUCTION_S_B_4, 28, 12, "INSTRUCTION_S_B_3");
-        check_instruction_s(INSTRUCTION_S_H_1, 27, 13, "INSTRUCTION_S_H_1");
-        check_instruction_s(INSTRUCTION_S_H_2, 26, 14, "INSTRUCTION_S_H_2");
-        check_instruction_s(INSTRUCTION_S_H_3, 25, 15, "INSTRUCTION_S_H_3");
-        check_instruction_s(INSTRUCTION_S_H_4, 24, 16, "INSTRUCTION_S_H_3");
-        check_instruction_s(INSTRUCTION_S_W_1, 23, 17, "INSTRUCTION_S_W_1");
-        check_instruction_s(INSTRUCTION_S_W_2, 22, 18, "INSTRUCTION_S_W_2");
+        --                  instruction        pos   rs1 rs2 ram_we  name
+        check_instruction_s(INSTRUCTION_S_B_1, "00", 00, 31, "0001", "INSTRUCTION_S_B_1");
+        check_instruction_s(INSTRUCTION_S_B_2, "01", 30, 10, "0010", "INSTRUCTION_S_B_2");
+        check_instruction_s(INSTRUCTION_S_B_3, "10", 29, 11, "0100", "INSTRUCTION_S_B_3");
+        check_instruction_s(INSTRUCTION_S_B_4, "11", 28, 12, "1000", "INSTRUCTION_S_B_3");
+        check_instruction_s(INSTRUCTION_S_H_1, "00", 27, 13, "0011", "INSTRUCTION_S_H_1");
+        check_instruction_s(INSTRUCTION_S_H_2, "01", 26, 14, "1111", "INSTRUCTION_S_H_2");
+        check_instruction_s(INSTRUCTION_S_H_3, "10", 25, 15, "1100", "INSTRUCTION_S_H_3");
+        check_instruction_s(INSTRUCTION_S_H_4, "11", 24, 16, "1111", "INSTRUCTION_S_H_3");
+        check_instruction_s(INSTRUCTION_S_W_1, "00", 23, 17, "1111", "INSTRUCTION_S_W_1");
+        check_instruction_s(INSTRUCTION_S_W_2, "00", 22, 18, "1111", "INSTRUCTION_S_W_2");
 
         wait for 1 ns;
 
