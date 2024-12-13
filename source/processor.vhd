@@ -48,15 +48,16 @@ architecture rtl of processor is
 
     component data_memory
         generic (
-            DATA_WIDTH : natural := data_width;
-            ADDR_WIDTH : natural := addr_width
+            BYTE_SIZE : natural := 8;
+            N_BYTES : natural := 4;
+            ADDR_WIDTH : natural := 5
         );
         port (
             clk : in std_logic;
             addr : in natural range 0 to 2 ** ADDR_WIDTH - 1;
-            data : in std_logic_vector((DATA_WIDTH - 1) downto 0);
-            we : in std_logic := '1';
-            q : out std_logic_vector((DATA_WIDTH - 1) downto 0)
+            data : in std_logic_vector((BYTE_SIZE * N_BYTES - 1) downto 0);
+            we : in std_logic_vector((N_BYTES - 1) downto 0) := (others => '0');
+            q : out std_logic_vector((BYTE_SIZE * N_BYTES - 1) downto 0)
         );
     end component;
 
@@ -93,8 +94,9 @@ architecture rtl of processor is
     component controller
         port (
             instr : in std_logic_vector(31 downto 0);
+            store_position : in std_logic_vector(1 downto 0);
             reg_we : out std_logic;
-            ram_we : out std_logic;
+            ram_we : out std_logic_vector(3 downto 0);
             pc_load : out std_logic;
             ri_sel : out std_logic;
             busw_sel : out std_logic;
@@ -134,15 +136,6 @@ architecture rtl of processor is
         );
     end component LM;
 
-    component SM
-        port (
-            current_data : in std_logic_vector(31 downto 0);
-            new_data : in std_logic_vector(31 downto 0);
-            position : in std_logic_vector(1 downto 0);
-            funct : in load_sel;
-            result : out std_logic_vector(31 downto 0)
-        );
-    end component SM;
     subtype data_word is std_logic_vector(DATA_WIDTH - 1 downto 0);
 
     signal load : std_logic;
@@ -163,7 +156,7 @@ architecture rtl of processor is
     signal instruction : data_word;
 
     signal register_write_enable : std_logic;
-    signal data_mem_write_enable : std_logic;
+    signal data_mem_write_enable : std_logic_vector(3 downto 0);
     signal ri_sel : std_logic;
     signal busw_sel : std_logic;
     signal alu_op : alu_op_sel;
@@ -183,15 +176,15 @@ begin
 
     rom : instruction_memory generic map(DATA_WIDTH => DATA_WIDTH, ADDR_WIDTH => ADDR_WIDTH, MEMORY_DEPTH => 2000, INIT_FILE => PROGRAM_FILE) port map(addr => addr_instr/4, q => instruction);
 
-    ram : data_memory generic map(data_width => DATA_WIDTH, ADDR_WIDTH => RAM_ADDR_WIDTH)
-    port map(
+    ram : data_memory generic map(
+        ADDR_WIDTH => RAM_ADDR_WIDTH) port map(
         clk => clk, addr => to_integer(unsigned(result(RAM_ADDR_WIDTH + 1 downto 2))),
-        data => ram_in, we => data_mem_write_enable, q => ram_data);
+        data => BusB, we => data_mem_write_enable, q => ram_data);
 
     alu_inst : ALU generic map(WORD_WIDTH => DATA_WIDTH) port map(opA => BusA, opB => operandB, res => result, aluOp => alu_op);
 
     controller_inst : controller port map(
-        instr => instruction, reg_we => register_write_enable, ram_we => data_mem_write_enable,
+        instr => instruction, store_position => result(1 downto 0), reg_we => register_write_enable, ram_we => data_mem_write_enable,
         pc_load => load, ri_sel => ri_sel, busw_sel => busw_sel, alu_op => alu_op, reg_dest => RW, reg_s1 => RA, reg_s2 => RB);
 
     bank : register_bank generic map(WORD_WIDTH => DATA_WIDTH, ADDR_WIDTH => REG_ADDR_WIDTH)
@@ -205,5 +198,4 @@ begin
 
     lm_inst : LM port map(data => ram_data, position => result(1 downto 0), funct => funct3, result => ram_out);
 
-    sm_inst : SM port map(current_data => ram_data, new_data => BusB, position => result(1 downto 0), funct => funct3, result => ram_in);
 end architecture rtl;
