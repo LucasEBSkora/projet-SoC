@@ -1,0 +1,79 @@
+[*]
+[*] GTKWave Analyzer v3.3.120 (w)1999-2024 BSI
+[*] Mon Dec 16 22:39:08 2024
+[*]
+[dumpfile] "dm1_test_sw.vcd"
+[dumpfile_mtime] "Mon Dec 16 22:25:00 2024"
+[dumpfile_size] 102296
+[savefile] "/home/lebs/Documents/SoC/projet-SoC/dm1_test_sw.gtkw"
+[timestart] 0
+[size] 1920 1001
+[pos] -51 -51
+*-25.500000 0 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] instruction_test_tb.
+[treeopen] instruction_test_tb.proc.
+[treeopen] instruction_test_tb.proc.bank.registers(1).
+[treeopen] instruction_test_tb.proc.bank.registers(1).regi.
+[treeopen] instruction_test_tb.proc.bank.registers(2).
+[treeopen] instruction_test_tb.proc.bank.registers(3).
+[treeopen] instruction_test_tb.proc.bank.registers(4).
+[treeopen] instruction_test_tb.proc.bank.registers(5).
+[treeopen] instruction_test_tb.proc.bank.registers(6).
+[sst_width] 284
+[signals_width] 234
+[sst_expanded] 1
+[sst_vpaned_height] 296
+@420
+instruction_test_tb.proc.addr_instr
+@28
+instruction_test_tb.proc.clk
+@c00024
+instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+@28
+(0)instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+(1)instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+(2)instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+(3)instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+(4)instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+(5)instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+(6)instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+(7)instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+(8)instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+(9)instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+(10)instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+(11)instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+(12)instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+(13)instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+(14)instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+(15)instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+(16)instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+(17)instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+(18)instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+(19)instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+(20)instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+(21)instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+(22)instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+(23)instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+(24)instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+(25)instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+(26)instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+(27)instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+(28)instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+(29)instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+(30)instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+(31)instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+@1401200
+-group_end
+@24
+instruction_test_tb.proc.bank.registers(2).regi.data[31:0]
+instruction_test_tb.proc.bank.registers(3).regi.data[31:0]
+instruction_test_tb.proc.bank.registers(4).regi.data[31:0]
+instruction_test_tb.proc.bank.registers(5).regi.data[31:0]
+instruction_test_tb.proc.bank.registers(6).regi.data[31:0]
+@29
+instruction_test_tb.proc.ram.we[3:0]
+@24
+instruction_test_tb.proc.ram.addr
+instruction_test_tb.proc.ram.q[31:0]
+[pattern_trace] 1
+[pattern_trace] 0

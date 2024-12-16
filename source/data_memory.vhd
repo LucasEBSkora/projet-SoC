@@ -47,7 +47,7 @@ begin
         if (rising_edge(clk)) then
             for i in 0 to N_BYTES - 1 loop
                 if (we(i) = '1') then
-                    ram(addr + i) <= data((BYTE_SIZE * (i + 1) - 1) downto BYTE_SIZE * i);
+                    ram(aligned_addr + i) <= data((BYTE_SIZE * (i + 1) - 1) downto BYTE_SIZE * i);
                 end if;
             end loop;
         end if;
@@ -55,6 +55,6 @@ begin
 
     output_assignement :
     for i in 0 to N_BYTES - 1 generate
-        q((BYTE_SIZE * (i + 1) - 1) downto BYTE_SIZE * i) <= ram(addr + i);
+        q((BYTE_SIZE * (i + 1) - 1) downto BYTE_SIZE * i) <= ram(aligned_addr + i);
     end generate;
 end architecture rtl;
