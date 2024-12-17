@@ -1,0 +1,53 @@
+[*]
+[*] GTKWave Analyzer v3.3.120 (w)1999-2024 BSI
+[*] Tue Dec 17 12:54:17 2024
+[*]
+[dumpfile] "dm1_test_sbsh.vcd"
+[dumpfile_mtime] "Tue Dec 17 12:47:28 2024"
+[dumpfile_size] 176024
+[savefile] "traces/dm1_test_sbsh.gtkw"
+[timestart] 173000000
+[size] 1920 1001
+[pos] -51 -51
+*-26.100000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] instruction_test_tb.
+[treeopen] instruction_test_tb.proc.
+[treeopen] instruction_test_tb.proc.bank.
+[treeopen] instruction_test_tb.proc.bank.registers(1).
+[treeopen] instruction_test_tb.proc.bank.registers(10).
+[treeopen] instruction_test_tb.proc.bank.registers(2).
+[treeopen] instruction_test_tb.proc.bank.registers(3).
+[treeopen] instruction_test_tb.proc.bank.registers(4).
+[treeopen] instruction_test_tb.proc.bank.registers(5).
+[treeopen] instruction_test_tb.proc.bank.registers(6).
+[treeopen] instruction_test_tb.proc.bank.registers(7).
+[treeopen] instruction_test_tb.proc.bank.registers(8).
+[treeopen] instruction_test_tb.proc.bank.registers(9).
+[sst_width] 284
+[signals_width] 110
+[sst_expanded] 1
+[sst_vpaned_height] 296
+@420
+instruction_test_tb.proc.addr_instr
+@28
+instruction_test_tb.proc.clk
+@22
+instruction_test_tb.proc.bank.registers(1).regi.data[31:0]
+instruction_test_tb.proc.bank.registers(2).regi.data[31:0]
+instruction_test_tb.proc.bank.registers(3).regi.data[31:0]
+instruction_test_tb.proc.bank.registers(4).regi.data[31:0]
+instruction_test_tb.proc.bank.registers(5).regi.data[31:0]
+instruction_test_tb.proc.bank.registers(6).regi.data[31:0]
+instruction_test_tb.proc.bank.registers(7).regi.data[31:0]
+instruction_test_tb.proc.bank.registers(8).regi.data[31:0]
+instruction_test_tb.proc.bank.registers(9).regi.data[31:0]
+@23
+instruction_test_tb.proc.bank.registers(10).regi.data[31:0]
+@22
+instruction_test_tb.proc.ram.we[3:0]
+@420
+instruction_test_tb.proc.ram.addr
+@22
+instruction_test_tb.proc.ram.q[31:0]
+[pattern_trace] 1
+[pattern_trace] 0

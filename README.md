@@ -6,6 +6,12 @@ Pour executer un testbench et voir les formes d'onde:
 
     make TESTBENCH=<nom de l'entité>
 
+Pour executer un programme dans le dossier programs:
+
+changer le chemin dans le fichier testbench/instruction_test_tb_.vhd
+
+    make TESTBENCH=instruction_test
+
 pour executer un tesbench sans voir les formes d'onde:
 
     make TESTBENCH=<nom de l'entité> test
