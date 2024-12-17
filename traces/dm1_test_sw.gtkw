@@ -5,7 +5,7 @@
 [dumpfile] "dm1_test_sw.vcd"
 [dumpfile_mtime] "Mon Dec 16 22:25:00 2024"
 [dumpfile_size] 102296
-[savefile] "/home/lebs/Documents/SoC/projet-SoC/dm1_test_sw.gtkw"
+[savefile] "traces/dm1_test_sw.gtkw"
 [timestart] 0
 [size] 1920 1001
 [pos] -51 -51
