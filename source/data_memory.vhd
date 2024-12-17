@@ -30,24 +30,30 @@ architecture rtl of data_memory is
         for addr_pos in 0 to MAX_ADDR loop
             tmp(addr_pos) := std_logic_vector(to_unsigned(addr_pos, BYTE_SIZE));
         end loop;
-        -- to test lh, lb, lbu and lhu
-        -- tmp(0) := X"01020304";
-        -- tmp(2) := X"FF800010";
         return tmp;
     end init_ram;
 
     signal ram : memory_t := init_ram;
     signal aligned_addr : natural range 0 to 2 ** ADDR_WIDTH - 1;
+    signal word_to_write : std_logic_vector((BYTE_SIZE * N_BYTES - 1) downto 0) := (others => '0');
+    signal bytes_written : natural range 0 to N_BYTES;
 begin
+
+    bytes_written <= to_integer(unsigned'("00" & we(0)) + unsigned'("00" & we(1)) + unsigned'("00" & we(2)) + unsigned'("00" & we(3)));
+
+    word_to_write <= data when bytes_written = 4 else
+        data(2 * BYTE_SIZE - 1 downto 0) & data(2 * BYTE_SIZE - 1 downto 0) when bytes_written = 2 else
+        data(BYTE_SIZE - 1 downto 0) & data(BYTE_SIZE - 1 downto 0) & data(BYTE_SIZE - 1 downto 0) & data(BYTE_SIZE - 1 downto 0) when bytes_written = 1 else
+        data;
 
     aligned_addr <= to_integer(to_unsigned(addr, ADDR_WIDTH)(ADDR_WIDTH - 1 downto 2) & "00");
 
-    process (clk, we, addr, data)
+    process (clk, we, addr, word_to_write)
     begin
         if (rising_edge(clk)) then
             for i in 0 to N_BYTES - 1 loop
                 if (we(i) = '1') then
-                    ram(aligned_addr + i) <= data((BYTE_SIZE * (i + 1) - 1) downto BYTE_SIZE * i);
+                    ram(aligned_addr + i) <= word_to_write((BYTE_SIZE * (i + 1) - 1) downto BYTE_SIZE * i);
                 end if;
             end loop;
         end if;

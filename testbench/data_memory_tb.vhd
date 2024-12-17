@@ -97,9 +97,9 @@ begin
         write_enable <= "1000";
         for addr_pos in 0 to 7 loop
             addr_t <= natural(addr_pos * 4);
-            data_in <= std_logic_vector(to_unsigned(addr_pos, byte_size)) &
-                std_logic_vector(to_unsigned(addr_pos, byte_size)) &
-                std_logic_vector(to_unsigned(addr_pos, byte_size)) &
+            data_in <= std_logic_vector(to_unsigned(4 * addr_pos, byte_size)) &
+                std_logic_vector(to_unsigned(3 * addr_pos, byte_size)) &
+                std_logic_vector(to_unsigned(2 * addr_pos, byte_size)) &
                 std_logic_vector(to_unsigned(addr_pos, byte_size));
             wait for 10 ns;
         end loop;
@@ -113,15 +113,13 @@ begin
             std_logic_vector(to_unsigned(31 - addr_pos * 4 - 0, byte_size))
             );
         end loop;
-
-
         write_enable <= "0011";
         for addr_pos in 0 to 7 loop
             addr_t <= natural(addr_pos * 4);
             data_in <= std_logic_vector(to_unsigned(0, byte_size)) &
                 std_logic_vector(to_unsigned(addr_pos, byte_size)) &
-                std_logic_vector(to_unsigned(2*addr_pos, byte_size)) &
-                std_logic_vector(to_unsigned(addr_pos+1, byte_size));
+                std_logic_vector(to_unsigned(2 * addr_pos, byte_size)) &
+                std_logic_vector(to_unsigned(addr_pos + 1, byte_size));
             wait for 10 ns;
         end loop;
 
@@ -130,7 +128,7 @@ begin
             check_word(addr_pos * 4,
             std_logic_vector(to_unsigned(addr_pos, byte_size)) &
             std_logic_vector(to_unsigned(31 - addr_pos * 4 - 2, byte_size)) &
-            std_logic_vector(to_unsigned(2*addr_pos, byte_size)) &
+            std_logic_vector(to_unsigned(2 * addr_pos, byte_size)) &
             std_logic_vector(to_unsigned(addr_pos + 1, byte_size))
             );
         end loop;
